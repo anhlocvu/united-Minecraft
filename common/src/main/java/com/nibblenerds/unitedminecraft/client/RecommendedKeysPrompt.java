@@ -21,8 +21,8 @@ import net.minecraft.network.chat.Component;
  * on to another screen by then, it waits for the title screen to come back.
  */
 final class RecommendedKeysPrompt {
-	private static final InputConstants.Key ATTACK_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_COMMA);
-	private static final InputConstants.Key USE_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_PERIOD);
+	static final InputConstants.Key ATTACK_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_COMMA);
+	static final InputConstants.Key USE_KEY = InputConstants.Type.KEYBOARD.getOrCreate(InputConstants.KEY_PERIOD);
 
 	private static boolean checkDone;
 	private static boolean pending;
@@ -86,7 +86,7 @@ final class RecommendedKeysPrompt {
 		return ATTACK_KEY.equals(attack) && USE_KEY.equals(use);
 	}
 
-	private static InputConstants.Key currentKey(KeyMapping mapping) {
+	static InputConstants.Key currentKey(KeyMapping mapping) {
 		return InputConstants.getKey(mapping.saveString());
 	}
 }

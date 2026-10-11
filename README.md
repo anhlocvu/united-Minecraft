@@ -862,6 +862,7 @@ Options > Controls.
 | ] / [ (with the F3 overlay open) | Next / previous line of the debug overlay section; reads the line's current value |
 | Shift+] / Shift+[ (with the F3 overlay open) | Next / previous debug overlay section |
 | F6 | Open United Minecraft Settings |
+| F7 | Swap Attack/Destroy and Place/Use between the mouse buttons and your other keys (comma and period if you took the recommended setup). Remembers whatever they were bound to when you left them, so rebinding in Controls is picked up the next time |
 
 Inside container menus, the Creative inventory, and settings/list screens, arrow
 keys/Tab/Enter/Home/End/Delete/Space/Page Up/Down take on the screen-specific

@@ -78,6 +78,9 @@ public final class UnitedMinecraftConfig {
 	public boolean narratorAutoEnableDone = false;
 	/** Set once the first-launch offer to rebind attack/use to comma/period has been shown - see {@link RecommendedKeysPrompt}. */
 	public boolean recommendedKeysAsked = false;
+	/** The Attack/Place keys last left behind by the mouse swap, as key names - null until the first swap; see {@link AttackUseKeySwap}. */
+	public String otherAttackKey = null;
+	public String otherUseKey = null;
 	public boolean mapBeaconEnabled = true;
 	public boolean wallTonesEnabled = false;
 	public int wallToneRange = 8;

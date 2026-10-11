@@ -230,6 +230,10 @@ public final class ClientKeyBindings {
 	public static final KeybindAction NARRATE_SCOREBOARD_FULL = new KeybindAction(
 			"narrate_scoreboard_full", KeybindCategory.NARRATION, new Keybind(InputConstants.KEY_APOSTROPHE, InputConstants.MOD_ALT));
 
+	/** Flips Attack/Destroy and Place/Use between the mouse buttons and the player's other keys - see {@link AttackUseKeySwap}. */
+	public static final KeybindAction SWAP_ATTACK_USE_KEYS =
+			new KeybindAction("swap_attack_use_keys", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_F7, 0));
+
 	/**
 	 * Debug overlay navigation - GLOBAL, but {@link DebugOverlayController} ignores them unless the
 	 * F3 overlay is showing. Brackets are otherwise unused, so these never compete with another

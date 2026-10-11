@@ -519,6 +519,9 @@ public final class AccessibilityTickHandler {
 			narrateScoreboard(client, player, false);
 		}
 		DebugOverlayController.handleKeys(client);
+		if (ClientKeyBindings.pressed(ClientKeyBindings.SWAP_ATTACK_USE_KEYS)) {
+			AttackUseKeySwap.toggle(client);
+		}
 
 		return snapTurn;
 	}
