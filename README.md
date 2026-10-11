@@ -262,6 +262,29 @@ refills to full - the cooldown that reduces damage on an early swing - so you
 know when a hit will land at full strength without watching for it.
 Configurable from Settings to play only in Combat Mode, always, or never.
 
+### Bow Beacon
+
+An optional setting (off by default, in Settings) that guides your aim by sound
+while you draw a bow, hold a loaded crossbow, or hold back a trident. It uses
+the same pings and solid tone as Combat Mode's Beacon style, but points them at
+where the *arrow* has to go rather than at the target itself: the pitch
+accounts for the arc, which changes as you draw further (a faster arrow drops
+less), and a moving target is led.
+
+The solid tone means a shot from where you are aiming would really hit. It is
+worked out by flying the arrow along your actual aim with the real speed,
+gravity and the target's own movement, so it only sounds when the arrow gets
+there before anything solid stops it - no line of sight, an under-drawn bow
+that would fall short, or an arc that clips a wall all keep it silent.
+
+The target is the Scanner's locked mob if you have one, otherwise the hostile
+mob nearest where you are already aiming that you can currently see. While this
+is on, the Scanner's lock and Combat Mode's Lock On stop steering the camera
+whenever you are holding a bow or crossbow (or holding back a trident), so the
+camera is yours to turn toward the sound; the lock itself is kept, and steers
+again when you put the weapon away. It takes over from Combat Mode's Beacon
+style for as long as you are aiming.
+
 ### Hostile Radar
 
 Always-on warning for a hostile mob that's gotten close and has a clear line

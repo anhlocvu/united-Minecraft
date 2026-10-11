@@ -41,6 +41,7 @@ final class CombatBeacon {
 	private static final float LOCK_VOLUME = 0.35f;
 
 	private static int ticksUntilPing;
+	// Hysteresis state for Combat Mode's own aim tolerance; the bow beacon keeps its own.
 	private static boolean locked;
 	private static CombatLockSound lockSound;
 
@@ -77,8 +78,20 @@ final class CombatBeacon {
 		double yawTolerance = toleranceDegrees(box.getXsize() / 2.0, distance);
 		double pitchTolerance = toleranceDegrees(box.getYsize() / 2.0, distance);
 		locked = isLocked(locked, Math.abs(yawError), Math.abs(pitchError), yawTolerance, pitchTolerance);
+		guide(client, player, eye, dx, dz, yawError, pitchError, locked);
+	}
 
-		if (locked) {
+	/**
+	 * The sound for one tick of guidance, given how far off the player's aim is and whether it counts
+	 * as {@code onTarget}: the solid lock tone if so, otherwise a ping on the cadence {@code yawError} sets.
+	 * Shared with {@link BowBeaconController}, which decides {@code onTarget} by simulating the shot.
+	 *
+	 * @param dx the horizontal offset to the aim point, which places the ping (only its direction matters)
+	 * @param dz as {@code dx}
+	 */
+	static void guide(Minecraft client, LocalPlayer player, Vec3 eye, double dx, double dz,
+			double yawError, double pitchError, boolean onTarget) {
+		if (onTarget) {
 			ticksUntilPing = 0;
 			holdLockTone(client, player);
 			return;

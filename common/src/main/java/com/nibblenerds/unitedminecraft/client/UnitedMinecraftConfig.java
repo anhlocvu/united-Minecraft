@@ -46,6 +46,8 @@ public final class UnitedMinecraftConfig {
 	public boolean buildModeActionNarrationEnabled = true;
 	public CombatCueMode combatCueMode = CombatCueMode.COMBAT_MODE_ONLY;
 	public CombatStyle combatStyle = CombatStyle.LOCK_ON;
+	/** Beacon guidance while drawing a bow - see {@link BowBeaconController}. Off by default. */
+	public boolean bowBeaconEnabled = false;
 	public boolean durabilityAwarenessEnabled = true;
 	public int durabilityWarningThreshold = 25;
 	public int durabilityCriticalThreshold = 10;

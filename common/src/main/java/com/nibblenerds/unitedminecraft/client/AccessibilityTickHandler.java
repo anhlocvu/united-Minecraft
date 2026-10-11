@@ -128,6 +128,7 @@ public final class AccessibilityTickHandler {
 			ClientKeyBindings.resetPressState();
 			BuildModeController.reset();
 			CombatModeController.reset();
+			BowBeaconController.reset();
 			MapMarkerController.reset();
 			NamedBlockController.reset();
 			ScannerController.reset();
@@ -228,7 +229,7 @@ public final class AccessibilityTickHandler {
 				// Owns rotation and movement the same way - mutually exclusive with the two
 				// auto-navigate modes just above, only one should ever be walking at once.
 				TrailController.tick(client, player);
-			} else if (ScannerController.isLocked()) {
+			} else if (ScannerController.ownsRotation()) {
 				ScannerController.tickLock(client, player);
 				ScannerController.tick(client, player);
 			} else if (CombatModeController.ownsRotation()) {
@@ -296,6 +297,8 @@ public final class AccessibilityTickHandler {
 			CombatModeController.tickAttackCue(client, player);
 			// Same reasoning - the Beacon style of Combat Mode never touches rotation, so it runs
 			// alongside whichever mode does.
+			BowBeaconController.tick(client, player);
+			// After the bow beacon, which it yields to while a bow is being aimed.
 			CombatModeController.tickBeacon(client, player);
 			// Proactive tool mismatch and mining waste prevention
 			ToolHarvestAwarenessController.tick(client, player);
@@ -309,9 +312,10 @@ public final class AccessibilityTickHandler {
 			// A screen is open: the beacon's tick above isn't running, so its looping lock tone
 			// would otherwise play on over the menu.
 			CombatBeacon.stop();
+			BowBeaconController.reset();
 		}
 
-		boolean rotationOwned = BuildModeController.isActive() || ScannerController.isLocked() || AutoWalkController.isActive()
+		boolean rotationOwned = BuildModeController.isActive() || ScannerController.ownsRotation() || AutoWalkController.isActive()
 				|| CombatModeController.ownsRotation() || WaterExitController.isActive() || ElytraLandingController.isActive()
 				|| TrailController.isActive();
 		if (!rotationOwned) {
@@ -376,7 +380,7 @@ public final class AccessibilityTickHandler {
 		// reads it is what makes the reset actually stick. ClientKeyBindings.pressed is a plain
 		// read (no consuming), so re-checking it again below, where it's normally handled, is safe
 		// and unaffected by this early check.
-		if (ScannerController.isLocked() && ClientKeyBindings.pressed(ClientKeyBindings.RESET_ROTATION_TO_NORTH)) {
+		if (ScannerController.ownsRotation() && ClientKeyBindings.pressed(ClientKeyBindings.RESET_ROTATION_TO_NORTH)) {
 			ScannerController.stopLock(client);
 		}
 
@@ -393,10 +397,10 @@ public final class AccessibilityTickHandler {
 		// KeybindContext already means it can only fire while Build Mode is active, so - unlike
 		// the old Alt+I-while-active check this replaces - there's no need to guard against it
 		// firing before Build Mode was ever turned on.
-		if (!ScannerController.isLocked() && !CombatModeController.ownsRotation()
+		if (!ScannerController.ownsRotation() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.BUILD_MODE_RECENTER_CURSOR)) {
 			BuildModeController.recenterCursor(client, player);
-		} else if (!ScannerController.isLocked() && !CombatModeController.ownsRotation()
+		} else if (!ScannerController.ownsRotation() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.TOGGLE_BUILD_MODE)) {
 			BuildModeController.toggle(client, player);
 		}
@@ -416,7 +420,7 @@ public final class AccessibilityTickHandler {
 		// swim while one of them already owns rotation would just fight it. Auto-Walk itself
 		// isn't in that list - starting a swim cancels it outright instead (see
 		// WaterExitController#start), since the two are never useful to run at once anyway.
-		boolean rotationFree = !ScannerController.isLocked() && !CombatModeController.ownsRotation() && !BuildModeController.isActive();
+		boolean rotationFree = !ScannerController.ownsRotation() && !CombatModeController.ownsRotation() && !BuildModeController.isActive();
 		if (rotationFree && ClientKeyBindings.pressed(ClientKeyBindings.WATER_ESCAPE_AUTO_SWIM)) {
 			if (player.isFallFlying()) {
 				ElytraLandingController.start(client, player);

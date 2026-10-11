@@ -69,7 +69,11 @@ public final class CombatModeController {
 	 * the camera?" wants this, not {@link #isActive}.
 	 */
 	public static boolean ownsRotation() {
-		return enabled && UnitedMinecraftConfig.get().combatStyle == UnitedMinecraftConfig.CombatStyle.LOCK_ON;
+		return enabled && !isBeaconStyle() && !BowBeaconController.pausesLock();
+	}
+
+	private static boolean isBeaconStyle() {
+		return UnitedMinecraftConfig.get().combatStyle == UnitedMinecraftConfig.CombatStyle.BEACON;
 	}
 
 	public static void reset() {
@@ -90,7 +94,7 @@ public final class CombatModeController {
 			return;
 		}
 
-		if (!ownsRotation()) {
+		if (isBeaconStyle()) {
 			// Beacon style never touches the camera or movement, so there is nothing for it to
 			// cancel - the Scanner lock, Build Mode and the auto-navigate modes all keep running.
 			target = findNearestHostile(player, player.getEyePosition());
@@ -137,7 +141,11 @@ public final class CombatModeController {
 	 * also what silences the beacon again once Combat Mode is off or has switched to Lock On.
 	 */
 	public static void tickBeacon(Minecraft client, LocalPlayer player) {
-		if (!enabled || ownsRotation()) {
+		if (BowBeaconController.isGuiding()) {
+			// A drawn bow's own beacon has the speakers; this one takes over again when it ends.
+			return;
+		}
+		if (!enabled || !isBeaconStyle()) {
 			CombatBeacon.stop();
 			return;
 		}
@@ -146,7 +154,7 @@ public final class CombatModeController {
 	}
 
 	private static void updateTarget(Minecraft client, LocalPlayer player) {
-		boolean beacon = !ownsRotation();
+		boolean beacon = isBeaconStyle();
 		boolean hadTarget = target != null;
 
 		// Also releases an Enderman target that's calmed back down since being locked onto -
@@ -252,7 +260,7 @@ public final class CombatModeController {
 	 * swinging (it's what raises its arms), so this works the same on any server, with or without
 	 * the mod installed there.
 	 */
-	private static boolean isCalmNeutral(Entity entity) {
+	static boolean isCalmNeutral(Entity entity) {
 		if (isCalmEnderman(entity)) {
 			return true;
 		}

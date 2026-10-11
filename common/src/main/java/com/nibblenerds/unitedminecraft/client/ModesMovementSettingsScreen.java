@@ -24,6 +24,8 @@ final class ModesMovementSettingsScreen extends SettingsListScreen {
 				List.of(UnitedMinecraftConfig.CombatStyle.values()), config.combatStyle,
 				style -> Component.translatable("united_minecraft.settings_screen.combat_style." + style.name().toLowerCase(Locale.ROOT)),
 				value -> config.combatStyle = value);
+		y = addToggle(x, y, "united_minecraft.settings_screen.bow_beacon_enabled",
+				config.bowBeaconEnabled, value -> config.bowBeaconEnabled = value);
 		y = addCycle(x, y, "united_minecraft.settings_screen.combat_cue_mode",
 				List.of(UnitedMinecraftConfig.CombatCueMode.values()), config.combatCueMode,
 				mode -> Component.translatable("united_minecraft.settings_screen.combat_cue_mode." + mode.name().toLowerCase(Locale.ROOT)),

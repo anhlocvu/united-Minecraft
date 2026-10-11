@@ -232,6 +232,19 @@ public final class ScannerController {
 		return lockedEntity != null;
 	}
 
+	/**
+	 * Locked on and steering the camera - false while a drawn bow's beacon has the camera released
+	 * to the player (see {@link BowBeaconController#pausesLock}), though the lock itself is kept.
+	 */
+	static boolean ownsRotation() {
+		return isLocked() && !BowBeaconController.pausesLock();
+	}
+
+	/** The locked entity, or null - what the bow beacon aims at first. */
+	static Entity lockedTarget() {
+		return lockedEntity;
+	}
+
 	public static void reset() {
 		categoryIndex = -1;
 		items = List.of();
