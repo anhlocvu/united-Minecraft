@@ -120,6 +120,8 @@ public final class AccessibilityTickHandler {
 			lastOffhandItem = null;
 			lastBiome = null;
 			lastCameraType = null;
+			DebugOverlayModel.reset();
+			DebugOverlayController.reset();
 			lastShoulderParrotLeft = null;
 			lastShoulderParrotRight = null;
 			screenWasOpenLastTick = false;
@@ -322,6 +324,8 @@ public final class AccessibilityTickHandler {
 		handleHotbarNarration(client, player);
 		handleBiomeNarration(client, player);
 		handleCameraNarration(client);
+		DebugOverlayModel.tick(client);
+		DebugOverlayController.tick(client);
 		handleTimeOfDayNarration(client, player);
 		handleShoulderParrotNarration(client, player);
 		// Only narrated in-world: the menu's own inventory-screen narration already covers the
@@ -503,6 +507,7 @@ public final class AccessibilityTickHandler {
 		} else if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_SCOREBOARD)) {
 			narrateScoreboard(client, player, false);
 		}
+		DebugOverlayController.handleKeys(client);
 
 		return snapTurn;
 	}

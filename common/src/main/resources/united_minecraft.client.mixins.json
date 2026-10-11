@@ -33,7 +33,8 @@
 		"ChatOverlayNarrationMixin",
 		"ChatMessageSoundMixin",
 		"SoundBufferLibraryMixin",
-		"StructureVoiceChannelMixin"
+		"StructureVoiceChannelMixin",
+		"DebugScreenOverlayAccessorMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

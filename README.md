@@ -826,6 +826,8 @@ Options > Controls.
 | \ (backslash) | Announce the Scanner's focused item's coordinates |
 | ; (semicolon) | Read the current boss bar(s) |
 | ' (apostrophe, hold Alt for the whole board) | Read the sidebar scoreboard |
+| ] / [ (with the F3 overlay open) | Next / previous line of the debug overlay section; reads the line's current value |
+| Shift+] / Shift+[ (with the F3 overlay open) | Next / previous debug overlay section |
 | F6 | Open United Minecraft Settings |
 
 Inside container menus, the Creative inventory, and settings/list screens, arrow
