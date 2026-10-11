@@ -45,6 +45,7 @@ public final class ClientHooks {
 	public static void onClientTick(Minecraft client) {
 		AccessibilityTickHandler.onEndTick(client);
 		TitleNarrationController.tick(client);
+		RecommendedKeysPrompt.tick(client);
 		MenuAccessibilityController.recheckInitialSlotNarration(client);
 		MenuAccessibilityController.recheckFocusedSlotForExternalChange(client);
 		MenuAccessibilityController.clearStrayFocus(client);
@@ -63,6 +64,7 @@ public final class ClientHooks {
 	 */
 	public static void onScreenInit(Screen screen) {
 		enableNarratorOnFirstLaunch();
+		RecommendedKeysPrompt.onScreenInit(screen);
 		if (screen instanceof AbstractContainerScreen<?> container) {
 			MenuAccessibilityController.onScreenInit(container);
 		}

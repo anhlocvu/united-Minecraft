@@ -73,6 +73,8 @@ public final class UnitedMinecraftConfig {
 	public boolean eyeOfEnderCuesEnabled = true;
 	/** Set once the first-launch narrator auto-enable has run - see {@link ClientHooks#enableNarratorOnFirstLaunch}. */
 	public boolean narratorAutoEnableDone = false;
+	/** Set once the first-launch offer to rebind attack/use to comma/period has been shown - see {@link RecommendedKeysPrompt}. */
+	public boolean recommendedKeysAsked = false;
 	public boolean mapBeaconEnabled = true;
 	public boolean wallTonesEnabled = false;
 	public int wallToneRange = 8;
