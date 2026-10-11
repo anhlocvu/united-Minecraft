@@ -47,7 +47,7 @@ import net.minecraft.world.scores.TeamColor;
  * period narration as they change.
  */
 public final class AccessibilityTickHandler {
-	// Degrees the camera turns per tick while a look key is held.
+	// Degrees the camera turns per tick while a look key is held, at the default turn speed setting.
 	private static final float ROTATION_SPEED_DEG_PER_TICK = 4.5f;
 
 	// Entity.turn(xo, yo) scales its input by 0.15 to emulate mouse-delta sensitivity;
@@ -527,19 +527,20 @@ public final class AccessibilityTickHandler {
 	}
 
 	private static void handleCameraLook(LocalPlayer player) {
+		float speed = ROTATION_SPEED_DEG_PER_TICK * UnitedMinecraftConfig.get().turnSpeedPercent / 100.0f;
 		float dYaw = 0.0f;
 		float dPitch = 0.0f;
 		if (ClientKeyBindings.LOOK_RIGHT.isDown()) {
-			dYaw += ROTATION_SPEED_DEG_PER_TICK;
+			dYaw += speed;
 		}
 		if (ClientKeyBindings.LOOK_LEFT.isDown()) {
-			dYaw -= ROTATION_SPEED_DEG_PER_TICK;
+			dYaw -= speed;
 		}
 		if (ClientKeyBindings.LOOK_DOWN.isDown()) {
-			dPitch += ROTATION_SPEED_DEG_PER_TICK;
+			dPitch += speed;
 		}
 		if (ClientKeyBindings.LOOK_UP.isDown()) {
-			dPitch -= ROTATION_SPEED_DEG_PER_TICK;
+			dPitch -= speed;
 		}
 		if (dYaw != 0.0f || dPitch != 0.0f) {
 			player.turn(dYaw * TURN_INPUT_SCALE, dPitch * TURN_INPUT_SCALE);

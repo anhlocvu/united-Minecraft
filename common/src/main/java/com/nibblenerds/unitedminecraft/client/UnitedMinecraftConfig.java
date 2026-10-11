@@ -69,6 +69,8 @@ public final class UnitedMinecraftConfig {
 	public boolean chatSoundEnabled = true;
 	/** Percent; scales every short audio cue - see {@link CueVolume}. */
 	public int cueVolume = 100;
+	/** How fast the arrow keys turn the camera, as a percentage of the original speed - see {@code AccessibilityTickHandler#handleCameraLook}. */
+	public int turnSpeedPercent = 100;
 	/** Narrate on-screen title and subtitle text - see {@link TitleNarrationController}. */
 	public boolean titleNarrationEnabled = true;
 	/** Spoken and audio alerts while gliding on an elytra - see {@link ElytraAwarenessController}. */
@@ -146,6 +148,7 @@ public final class UnitedMinecraftConfig {
 		wallToneVolume = (int) clamp("wallToneVolume", wallToneVolume, 5, 100);
 		structureVoiceVolume = (int) clamp("structureVoiceVolume", structureVoiceVolume, 5, 100);
 		cueVolume = (int) clamp("cueVolume", cueVolume, 5, 100);
+		turnSpeedPercent = (int) clamp("turnSpeedPercent", turnSpeedPercent, 50, 300);
 		if (structureVoiceMuted == null) {
 			structureVoiceMuted = new ArrayList<>();
 		}

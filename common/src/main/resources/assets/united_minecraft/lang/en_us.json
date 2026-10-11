@@ -654,6 +654,7 @@
 	"united_minecraft.settings_screen.auto_walk_swim": "Auto-Walk: Swim Across Water When It Can Get Out",
 	"united_minecraft.settings_screen.precise_coordinates_enabled": "Precise Coordinates (One Decimal Place)",
 	"united_minecraft.settings_screen.mode_toggle_sounds_enabled": "Build/Combat Mode On/Off Sounds",
+	"united_minecraft.settings_screen.turn_speed_percent": "Arrow Key Turn Speed (percent)",
 	"united_minecraft.settings_screen.cue_volume": "Audio Cue Volume (percent)",
 	"united_minecraft.settings_screen.chat_sound_enabled": "Chat Message Sound",
 	"united_minecraft.settings_screen.auto_crosshair_repeat_same_block": "Auto Crosshair: Repeat For Same Block Type",

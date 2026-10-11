@@ -653,7 +653,8 @@ added:
   volume, and also narrating distance and direction).
 - **Wall Tones** - range, volume, Tones/Noise style, the separate
   pulsing obstacle sound, and the ceiling sound.
-- **Modes & Movement** - re-narrating Build Mode's cursor after a
+- **Modes & Movement** - how fast the arrow keys turn the camera (50% to
+  300% of the original speed; snap-turn is unaffected), re-narrating Build Mode's cursor after a
   successful place/break/interact (on by default - turn it off if you'd
   rather rely on the sound/visual feedback alone for a routine action),
   a three-way switch for the Combat Mode attack-ready cue (off, Combat
