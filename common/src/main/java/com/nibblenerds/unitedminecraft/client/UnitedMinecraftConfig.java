@@ -45,6 +45,7 @@ public final class UnitedMinecraftConfig {
 	public double scannerRange = 32.0;
 	public boolean buildModeActionNarrationEnabled = true;
 	public CombatCueMode combatCueMode = CombatCueMode.COMBAT_MODE_ONLY;
+	public CombatStyle combatStyle = CombatStyle.LOCK_ON;
 	public boolean durabilityAwarenessEnabled = true;
 	public int durabilityWarningThreshold = 25;
 	public int durabilityCriticalThreshold = 10;
@@ -92,6 +93,15 @@ public final class UnitedMinecraftConfig {
 	public boolean structureVoiceNarrate = false;
 	/** Structure ids never announced, e.g. {@code "minecraft:mineshaft"} - only editable in the file for now. */
 	public List<String> structureVoiceMuted = new ArrayList<>();
+
+	/**
+	 * How Combat Mode points the player at the nearest hostile: {@code LOCK_ON} takes over the
+	 * camera and aims for them, {@code BEACON} leaves the camera alone and plays a sound they turn
+	 * toward instead - see {@link CombatBeacon}.
+	 */
+	public enum CombatStyle {
+		LOCK_ON, BEACON
+	}
 
 	/** Governs the audio cue for the weapon attack-strength meter refilling - see {@link CombatModeController#tickAttackCue}. */
 	public enum CombatCueMode {
@@ -146,6 +156,10 @@ public final class UnitedMinecraftConfig {
 		if (combatCueMode == null) {
 			LOGGER.warn("Setting combatCueMode was missing or not a recognised value, using {}", CombatCueMode.COMBAT_MODE_ONLY);
 			combatCueMode = CombatCueMode.COMBAT_MODE_ONLY;
+		}
+		if (combatStyle == null) {
+			LOGGER.warn("Setting combatStyle was missing or not a recognised value, using {}", CombatStyle.LOCK_ON);
+			combatStyle = CombatStyle.LOCK_ON;
 		}
 	}
 

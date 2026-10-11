@@ -58,12 +58,23 @@ public final class CombatModeController {
 	private CombatModeController() {
 	}
 
+	/** Combat Mode is switched on, in either style. */
 	public static boolean isActive() {
 		return enabled;
 	}
 
+	/**
+	 * Combat Mode is on <em>and</em> taking over the camera - only the Lock On style does; the
+	 * Beacon style leaves rotation to the player. Everything that asks "is something else steering
+	 * the camera?" wants this, not {@link #isActive}.
+	 */
+	public static boolean ownsRotation() {
+		return enabled && UnitedMinecraftConfig.get().combatStyle == UnitedMinecraftConfig.CombatStyle.LOCK_ON;
+	}
+
 	public static void reset() {
 		enabled = false;
+		CombatBeacon.stop();
 		target = null;
 		attackReadyLastTick = true;
 		piglinLastAggressive.clear();
@@ -74,10 +85,22 @@ public final class CombatModeController {
 		ModeToggleSound.playCombatMode(client, player, enabled);
 		if (!enabled) {
 			target = null;
+			CombatBeacon.stop();
 			client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.combat_mode_off"));
 			return;
 		}
 
+		if (!ownsRotation()) {
+			// Beacon style never touches the camera or movement, so there is nothing for it to
+			// cancel - the Scanner lock, Build Mode and the auto-navigate modes all keep running.
+			target = findNearestHostile(player, player.getEyePosition());
+			client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.combat_mode_on")
+					.append(Component.literal(" "))
+					.append(target != null
+							? Component.translatable("united_minecraft.narrate.combat_beacon_target", target.getDisplayName())
+							: Component.translatable("united_minecraft.narrate.scanner_empty")));
+			return;
+		}
 		if (BuildModeController.isActive()) {
 			BuildModeController.toggle(client, player);
 		}
@@ -100,7 +123,30 @@ public final class CombatModeController {
 		client.getNarrator().saySystemNow(message);
 	}
 
+	/** Lock On style: pick the nearest threat and aim the camera at it. */
 	public static void tick(Minecraft client, LocalPlayer player) {
+		updateTarget(client, player);
+		if (target != null) {
+			CameraUtil.aimAtEntity(player, target);
+		}
+	}
+
+	/**
+	 * Beacon style: pick the nearest threat and sound off toward it, leaving the camera alone.
+	 * Called every tick no matter what else owns rotation (like {@link MapBeaconController}), and
+	 * also what silences the beacon again once Combat Mode is off or has switched to Lock On.
+	 */
+	public static void tickBeacon(Minecraft client, LocalPlayer player) {
+		if (!enabled || ownsRotation()) {
+			CombatBeacon.stop();
+			return;
+		}
+		updateTarget(client, player);
+		CombatBeacon.tick(client, player, target);
+	}
+
+	private static void updateTarget(Minecraft client, LocalPlayer player) {
+		boolean beacon = !ownsRotation();
 		boolean hadTarget = target != null;
 
 		// Also releases an Enderman target that's calmed back down since being locked onto -
@@ -115,7 +161,8 @@ public final class CombatModeController {
 		if (nearest != null && shouldSwitchTo(eye, nearest)) {
 			target = nearest;
 			client.getNarrator().saySystemNow(Component.translatable(
-					"united_minecraft.narrate.scanner_lock_started", target.getDisplayName()));
+					beacon ? "united_minecraft.narrate.combat_beacon_target" : "united_minecraft.narrate.scanner_lock_started",
+					target.getDisplayName()));
 		} else if (hadTarget && target == null) {
 			// The old target died, left, or calmed down and nothing else in range took its
 			// place - silence here would be indistinguishable from Combat Mode just not having
@@ -123,11 +170,8 @@ public final class CombatModeController {
 			// reached when nearest is null: shouldSwitchTo unconditionally accepts any candidate
 			// once target is already null, so a real nearest would already have been picked up
 			// by the branch above.
-			client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.scanner_lock_lost"));
-		}
-
-		if (target != null) {
-			CameraUtil.aimAtEntity(player, target);
+			client.getNarrator().saySystemNow(Component.translatable(
+					beacon ? "united_minecraft.narrate.combat_beacon_lost" : "united_minecraft.narrate.scanner_lock_lost"));
 		}
 	}
 

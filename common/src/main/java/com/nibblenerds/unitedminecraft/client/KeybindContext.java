@@ -72,11 +72,11 @@ public enum KeybindContext {
 			case WATER_ESCAPE -> noScreenOpen && WaterExitController.isActive();
 			case TRAIL -> noScreenOpen && TrailController.isActive();
 			case SCANNER_LOCKED -> noScreenOpen && ScannerController.isLocked();
-			case COMBAT_MODE -> noScreenOpen && CombatModeController.isActive();
+			case COMBAT_MODE -> noScreenOpen && CombatModeController.ownsRotation();
 			case BUILD_MODE -> noScreenOpen && BuildModeController.isActive();
 			case NORMAL_LOOK -> noScreenOpen && !AutoWalkController.isActive() && !WaterExitController.isActive()
 					&& !TrailController.isActive() && !ScannerController.isLocked()
-					&& !CombatModeController.isActive() && !BuildModeController.isActive();
+					&& !CombatModeController.ownsRotation() && !BuildModeController.isActive();
 			case CONTAINER_SCREEN -> Minecraft.getInstance().gui.screen() instanceof AbstractContainerScreen;
 		};
 	}

@@ -231,7 +231,7 @@ public final class AccessibilityTickHandler {
 			} else if (ScannerController.isLocked()) {
 				ScannerController.tickLock(client, player);
 				ScannerController.tick(client, player);
-			} else if (CombatModeController.isActive()) {
+			} else if (CombatModeController.ownsRotation()) {
 				// Owns rotation entirely, the same as scanner lock-on above - deliberately not
 				// also running build mode/normal camera look/scanner key handling here.
 				CombatModeController.tick(client, player);
@@ -294,6 +294,9 @@ public final class AccessibilityTickHandler {
 			// Same reasoning - the attack-strength meter keeps recharging regardless of what
 			// else is going on, and CombatCueMode.ALWAYS needs it tracked outside Combat Mode too.
 			CombatModeController.tickAttackCue(client, player);
+			// Same reasoning - the Beacon style of Combat Mode never touches rotation, so it runs
+			// alongside whichever mode does.
+			CombatModeController.tickBeacon(client, player);
 			// Proactive tool mismatch and mining waste prevention
 			ToolHarvestAwarenessController.tick(client, player);
 			// Same reasoning - a nearby animal you're feeding could finish taming regardless of
@@ -302,10 +305,14 @@ public final class AccessibilityTickHandler {
 			// Same reasoning - a held Jump on a mount keeps charging regardless of what else is
 			// going on, and vanilla's only feedback for a full charge is a purely visual bar.
 			MountJumpCueController.tick(client, player);
+		} else {
+			// A screen is open: the beacon's tick above isn't running, so its looping lock tone
+			// would otherwise play on over the menu.
+			CombatBeacon.stop();
 		}
 
 		boolean rotationOwned = BuildModeController.isActive() || ScannerController.isLocked() || AutoWalkController.isActive()
-				|| CombatModeController.isActive() || WaterExitController.isActive() || ElytraLandingController.isActive()
+				|| CombatModeController.ownsRotation() || WaterExitController.isActive() || ElytraLandingController.isActive()
 				|| TrailController.isActive();
 		if (!rotationOwned) {
 			if (rotationOwnedLastTick) {
@@ -386,10 +393,10 @@ public final class AccessibilityTickHandler {
 		// KeybindContext already means it can only fire while Build Mode is active, so - unlike
 		// the old Alt+I-while-active check this replaces - there's no need to guard against it
 		// firing before Build Mode was ever turned on.
-		if (!ScannerController.isLocked() && !CombatModeController.isActive()
+		if (!ScannerController.isLocked() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.BUILD_MODE_RECENTER_CURSOR)) {
 			BuildModeController.recenterCursor(client, player);
-		} else if (!ScannerController.isLocked() && !CombatModeController.isActive()
+		} else if (!ScannerController.isLocked() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.TOGGLE_BUILD_MODE)) {
 			BuildModeController.toggle(client, player);
 		}
@@ -409,7 +416,7 @@ public final class AccessibilityTickHandler {
 		// swim while one of them already owns rotation would just fight it. Auto-Walk itself
 		// isn't in that list - starting a swim cancels it outright instead (see
 		// WaterExitController#start), since the two are never useful to run at once anyway.
-		boolean rotationFree = !ScannerController.isLocked() && !CombatModeController.isActive() && !BuildModeController.isActive();
+		boolean rotationFree = !ScannerController.isLocked() && !CombatModeController.ownsRotation() && !BuildModeController.isActive();
 		if (rotationFree && ClientKeyBindings.pressed(ClientKeyBindings.WATER_ESCAPE_AUTO_SWIM)) {
 			if (player.isFallFlying()) {
 				ElytraLandingController.start(client, player);
@@ -439,7 +446,7 @@ public final class AccessibilityTickHandler {
 		if (ClientKeyBindings.pressed(ClientKeyBindings.ANGLE_ASSIST_CYCLE)) {
 			AngleAssistController.cycle(client);
 		}
-		if (!BuildModeController.isActive() && !CombatModeController.isActive()
+		if (!BuildModeController.isActive() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.SCANNER_LOCK_BOSS)) {
 			// Build Mode and Combat Mode both own the camera and the target, so the key does
 			// nothing under either - Combat Mode picks its own (nearest) target.

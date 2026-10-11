@@ -305,7 +305,7 @@ public final class ScannerController {
 			}
 			return;
 		}
-		if (BuildModeController.isActive() || CombatModeController.isActive()) {
+		if (BuildModeController.isActive() || CombatModeController.ownsRotation()) {
 			return;
 		}
 

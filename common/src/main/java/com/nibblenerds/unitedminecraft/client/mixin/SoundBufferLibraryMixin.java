@@ -11,6 +11,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.blaze3d.audio.SoundBuffer;
+import com.nibblenerds.unitedminecraft.client.CombatLockSynth;
 import com.nibblenerds.unitedminecraft.client.StructureVoiceAudio;
 import com.nibblenerds.unitedminecraft.client.WallToneSynth;
 
@@ -34,6 +35,8 @@ public abstract class SoundBufferLibraryMixin {
 	private void unitedMinecraft$synthesizeWallTone(Identifier path, CallbackInfoReturnable<CompletableFuture<SoundBuffer>> cir) {
 		if (WallToneSynth.handles(path)) {
 			cir.setReturnValue(cache.computeIfAbsent(path, key -> CompletableFuture.completedFuture(WallToneSynth.create(key))));
+		} else if (CombatLockSynth.handles(path)) {
+			cir.setReturnValue(cache.computeIfAbsent(path, key -> CompletableFuture.completedFuture(CombatLockSynth.create(key))));
 		} else if (StructureVoiceAudio.handles(path)) {
 			// Spoken structure names - only ever played once their audio has been rendered.
 			cir.setReturnValue(cache.computeIfAbsent(path, key -> CompletableFuture.completedFuture(StructureVoiceAudio.create(key))));

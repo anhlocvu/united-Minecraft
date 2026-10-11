@@ -241,6 +241,16 @@ it dies - built for fighting more than one attacker, where re-targeting by
 hand between hits isn't practical. Auto-disables Build Mode if it was on, and
 you can still walk, strafe, and jump freely while your aim stays locked.
 
+An optional second style, switched in Settings (Combat Mode Style: Lock On or
+Beacon), leaves the camera entirely yours and guides you by sound instead. The
+nearest hostile becomes a ping that plays from its direction; it repeats faster
+the closer your facing is to it, and its pitch tells you whether to look up
+(lower) or down (higher). Once you are aimed at it in both directions the pings
+give way to a solid tone, which holds until your aim drifts off. Nothing is
+cancelled by turning Beacon on - Build Mode, Scanner lock and the rest keep
+running. Facing away is slow pings, facing it is fast ones, so ahead and
+behind sound different even though they pan the same.
+
 Mobs that only fight once provoked are left alone until they are: a calm
 Enderman, or a calm zombified piglin - hitting one of those turns the whole
 group on you. A zombified piglin counts once it's actually coming for you,

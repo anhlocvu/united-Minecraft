@@ -20,6 +20,10 @@ final class ModesMovementSettingsScreen extends SettingsListScreen {
 
 		y = addToggle(x, y, "united_minecraft.settings_screen.build_mode_action_narration_enabled",
 				config.buildModeActionNarrationEnabled, value -> config.buildModeActionNarrationEnabled = value);
+		y = addCycle(x, y, "united_minecraft.settings_screen.combat_style",
+				List.of(UnitedMinecraftConfig.CombatStyle.values()), config.combatStyle,
+				style -> Component.translatable("united_minecraft.settings_screen.combat_style." + style.name().toLowerCase(Locale.ROOT)),
+				value -> config.combatStyle = value);
 		y = addCycle(x, y, "united_minecraft.settings_screen.combat_cue_mode",
 				List.of(UnitedMinecraftConfig.CombatCueMode.values()), config.combatCueMode,
 				mode -> Component.translatable("united_minecraft.settings_screen.combat_cue_mode." + mode.name().toLowerCase(Locale.ROOT)),
