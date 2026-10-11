@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import com.nibblenerds.unitedminecraft.client.access.BossHealthOverlayAccess;
 
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.BossHealthOverlay;
 import net.minecraft.client.gui.components.LerpingBossEvent;
@@ -97,6 +98,7 @@ public final class AccessibilityTickHandler {
 	private static int lastTimePeriod = -1;
 	private static Item lastOffhandItem = null;
 	private static Holder<Biome> lastBiome = null;
+	private static CameraType lastCameraType = null;
 	// null (not Optional.empty()) means "not yet known" - see handleShoulderParrotNarration.
 	private static Optional<Parrot.Variant> lastShoulderParrotLeft = null;
 	private static Optional<Parrot.Variant> lastShoulderParrotRight = null;
@@ -117,6 +119,7 @@ public final class AccessibilityTickHandler {
 			lastTimePeriod = -1;
 			lastOffhandItem = null;
 			lastBiome = null;
+			lastCameraType = null;
 			lastShoulderParrotLeft = null;
 			lastShoulderParrotRight = null;
 			screenWasOpenLastTick = false;
@@ -318,6 +321,7 @@ public final class AccessibilityTickHandler {
 		rotationOwnedLastTick = rotationOwned;
 		handleHotbarNarration(client, player);
 		handleBiomeNarration(client, player);
+		handleCameraNarration(client);
 		handleTimeOfDayNarration(client, player);
 		handleShoulderParrotNarration(client, player);
 		// Only narrated in-world: the menu's own inventory-screen narration already covers the
@@ -668,6 +672,28 @@ public final class AccessibilityTickHandler {
 		return stack.isEmpty()
 				? Component.translatable("united_minecraft.narrate.hotbar_empty")
 				: ItemDescriptions.describe(stack, player);
+	}
+
+	/**
+	 * Edge-triggered on the perspective, so it follows F5 and also anything else that switches the
+	 * camera. Said immediately rather than queued: it answers a keypress, like the hotbar does.
+	 */
+	private static void handleCameraNarration(Minecraft client) {
+		CameraType camera = client.options.getCameraType();
+		if (camera != lastCameraType) {
+			if (lastCameraType != null) {
+				client.getNarrator().saySystemNow(Component.translatable(cameraKey(camera)));
+			}
+			lastCameraType = camera;
+		}
+	}
+
+	static String cameraKey(CameraType camera) {
+		return switch (camera) {
+			case FIRST_PERSON -> "united_minecraft.narrate.camera_first_person";
+			case THIRD_PERSON_BACK -> "united_minecraft.narrate.camera_third_person_back";
+			case THIRD_PERSON_FRONT -> "united_minecraft.narrate.camera_third_person_front";
+		};
 	}
 
 	private static void handleBiomeNarration(Minecraft client, LocalPlayer player) {
