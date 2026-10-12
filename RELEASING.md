@@ -96,7 +96,7 @@ GitHub release.
      - e.g. `United Minecraft 1.2.0 for Minecraft 26.3`
    - **Notes**: a short "What's new" list, plus the loader versions this build
      was built and tested against (from `gradle.properties`) so players
-     installing via the README's Installation steps know exactly what to grab:
+     installing via the Installation guide (docs/installation.md) know exactly what to grab:
      Fabric Loader and Fabric API for the Fabric jar, NeoForge for the
      NeoForge jar. Say which loaders this release includes, especially when it
      is Fabric-only.
