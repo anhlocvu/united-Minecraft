@@ -105,6 +105,17 @@ public abstract class TextFieldHelperMixin {
 		}
 	}
 
+	/** Cutting removes the selection without going through {@code insertText} or {@code removeCharsFromCursor}. */
+	@Inject(method = "cut", at = @At("HEAD"))
+	private void unitedMinecraft$narrateCutText(CallbackInfo ci) {
+		if (selectionPos != cursorPos) {
+			String msg = getMessageFn.get();
+			if (msg != null && !msg.isEmpty()) {
+				unitedMinecraft$narrate(getSelected(msg));
+			}
+		}
+	}
+
 	@Inject(method = "removeCharsFromCursor", at = @At("HEAD"))
 	private void unitedMinecraft$narrateErasedText(int count, CallbackInfo ci) {
 		String msg = getMessageFn.get();

@@ -121,8 +121,6 @@ import net.minecraft.world.level.block.WeepingVinesBlock;
 import net.minecraft.world.level.block.WeepingVinesPlantBlock;
 import net.minecraft.world.level.block.entity.ListBackedContainer;
 import net.minecraft.world.level.block.entity.SignBlockEntity;
-import net.minecraft.world.level.block.entity.SignText;
-import net.minecraft.world.level.block.entity.SignTextSlot;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -1175,10 +1173,9 @@ public final class ScannerController {
 		if (category == ScannerCategory.MECHANISMS || markedBlock) {
 			BlockState state = player.level().getBlockState(item.blockPos());
 			if (state.getBlock() instanceof SignBlock) {
-				Component signText = describeSignText(player.level(), item.blockPos());
-				name = signText != null
-						? name.copy().append(Component.literal(", ")).append(signText)
-						: name.copy().append(Component.literal(", ")).append(Component.translatable("united_minecraft.narrate.scanner_sign_blank"));
+				if (player.level().getBlockEntity(item.blockPos()) instanceof SignBlockEntity sign) {
+					name = name.copy().append(Component.literal(", ")).append(SignNarrationHelper.describeFacingSide(sign, player));
+				}
 			}
 			// Shared by DoorBlock, TrapDoorBlock, and FenceGateBlock alike - see BuildModeController's
 			// own describeCursor for why this one BlockStateProperties constant covers all three.
@@ -1381,27 +1378,6 @@ public final class ScannerController {
 			name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
 		}
 		return name.toString();
-	}
-
-	/** Joins a sign's non-blank lines (front first, falling back to back if the front is empty) - null if both sides are blank. */
-	private static Component describeSignText(Level level, BlockPos pos) {
-		if (!(level.getBlockEntity(pos) instanceof SignBlockEntity sign)) {
-			return null;
-		}
-		Component front = joinSignLines(sign.getText(SignTextSlot.FRONT));
-		return front != null ? front : joinSignLines(sign.getText(SignTextSlot.BACK));
-	}
-
-	private static Component joinSignLines(SignText text) {
-		MutableComponent result = null;
-		for (Component line : text.getMessages(false)) {
-			String plain = line.getString();
-			if (plain.isBlank()) {
-				continue;
-			}
-			result = result == null ? Component.literal(plain) : result.append(Component.literal(" ")).append(Component.literal(plain));
-		}
-		return result;
 	}
 
 	private static List<ScannerItem> scan(ScannerCategory category, LocalPlayer player) {

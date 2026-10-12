@@ -40,6 +40,23 @@ public final class SignNarrationHelper {
 	}
 
 	/**
+	 * The text of the side of the sign the player is facing, labelled with that side
+	 * ("Front: ..."), or "Blank" if that side has no text. Used where the sign's name is
+	 * already being narrated separately (the Scanner and the look-ahead read).
+	 */
+	public static Component describeFacingSide(SignBlockEntity sign, LocalPlayer player) {
+		SignTextSlot slot = sign.getSlotPlayerIsFacing(player);
+		Component text = joinSignLines(sign.getText(slot));
+		if (text == null) {
+			return Component.translatable("united_minecraft.narrate.scanner_sign_blank");
+		}
+		Component side = Component.translatable(slot == SignTextSlot.FRONT
+				? "united_minecraft.narrate.sign_side_front"
+				: "united_minecraft.narrate.sign_side_back");
+		return Component.empty().append(side).append(Component.literal(": ")).append(text);
+	}
+
+	/**
 	 * Joins non-empty lines of a {@link SignText} with commas, or returns null if all lines are blank.
 	 */
 	public static Component joinSignLines(SignText text) {

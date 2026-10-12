@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignTextSlot;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -33,7 +35,7 @@ public final class AutoCrosshairNarrationController {
 
 	private static Block lastNarratedBlock;
 	private static BlockPos lastNarratedPos;
-	private static net.minecraft.world.level.block.entity.SignTextSlot lastNarratedSignSlot;
+	private static SignTextSlot lastNarratedSignSlot;
 
 	private AutoCrosshairNarrationController() {
 	}
@@ -71,7 +73,7 @@ public final class AutoCrosshairNarrationController {
 			return;
 		}
 		Block current = player.level().getBlockState(pos).getBlock();
-		net.minecraft.world.level.block.entity.SignTextSlot currentSignSlot = player.level().getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign
+		SignTextSlot currentSignSlot = player.level().getBlockEntity(pos) instanceof SignBlockEntity sign
 				? sign.getSlotPlayerIsFacing(player)
 				: null;
 		boolean slotChanged = currentSignSlot != null && currentSignSlot != lastNarratedSignSlot;
