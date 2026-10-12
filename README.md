@@ -241,6 +241,16 @@ it dies - built for fighting more than one attacker, where re-targeting by
 hand between hits isn't practical. Auto-disables Build Mode if it was on, and
 you can still walk, strafe, and jump freely while your aim stays locked.
 
+An optional second style, switched in Settings (Combat Mode Style: Lock On or
+Beacon), leaves the camera entirely yours and guides you by sound instead. The
+nearest hostile becomes a ping that plays from its direction; it repeats faster
+the closer your facing is to it, and its pitch tells you whether to look up
+(lower) or down (higher). Once you are aimed at it in both directions the pings
+give way to a solid tone, which holds until your aim drifts off. Nothing is
+cancelled by turning Beacon on - Build Mode, Scanner lock and the rest keep
+running. Facing away is slow pings, facing it is fast ones, so ahead and
+behind sound different even though they pan the same.
+
 Mobs that only fight once provoked are left alone until they are: a calm
 Enderman, or a calm zombified piglin - hitting one of those turns the whole
 group on you. A zombified piglin counts once it's actually coming for you,
@@ -251,6 +261,29 @@ A separate audio cue plays the moment your weapon's attack-strength meter
 refills to full - the cooldown that reduces damage on an early swing - so you
 know when a hit will land at full strength without watching for it.
 Configurable from Settings to play only in Combat Mode, always, or never.
+
+### Bow Beacon
+
+An optional setting (off by default, in Settings) that guides your aim by sound
+while you draw a bow, hold a loaded crossbow, or hold back a trident. It uses
+the same pings and solid tone as Combat Mode's Beacon style, but points them at
+where the *arrow* has to go rather than at the target itself: the pitch
+accounts for the arc, which changes as you draw further (a faster arrow drops
+less), and a moving target is led.
+
+The solid tone means a shot from where you are aiming would really hit. It is
+worked out by flying the arrow along your actual aim with the real speed,
+gravity and the target's own movement, so it only sounds when the arrow gets
+there before anything solid stops it - no line of sight, an under-drawn bow
+that would fall short, or an arc that clips a wall all keep it silent.
+
+The target is the Scanner's locked mob if you have one, otherwise the hostile
+mob nearest where you are already aiming that you can currently see. While this
+is on, the Scanner's lock and Combat Mode's Lock On stop steering the camera
+whenever you are holding a bow or crossbow (or holding back a trident), so the
+camera is yours to turn toward the sound; the lock itself is kept, and steers
+again when you put the weapon away. It takes over from Combat Mode's Beacon
+style for as long as you are aiming.
 
 ### Hostile Radar
 
@@ -620,7 +653,8 @@ added:
   volume, and also narrating distance and direction).
 - **Wall Tones** - range, volume, Tones/Noise style, the separate
   pulsing obstacle sound, and the ceiling sound.
-- **Modes & Movement** - re-narrating Build Mode's cursor after a
+- **Modes & Movement** - how fast the arrow keys turn the camera (50% to
+  300% of the original speed; snap-turn is unaffected), re-narrating Build Mode's cursor after a
   successful place/break/interact (on by default - turn it off if you'd
   rather rely on the sound/visual feedback alone for a routine action),
   a three-way switch for the Combat Mode attack-ready cue (off, Combat
@@ -826,7 +860,10 @@ Options > Controls.
 | \ (backslash) | Announce the Scanner's focused item's coordinates |
 | ; (semicolon) | Read the current boss bar(s) |
 | ' (apostrophe, hold Alt for the whole board) | Read the sidebar scoreboard |
+| ] / [ (with the F3 overlay open) | Next / previous line of the debug overlay section; reads the line's current value |
+| Shift+] / Shift+[ (with the F3 overlay open) | Next / previous debug overlay section |
 | F6 | Open United Minecraft Settings |
+| F7 | Swap Attack/Destroy and Place/Use between the mouse buttons and your other keys (comma and period if you took the recommended setup). Remembers whatever they were bound to when you left them, so rebinding in Controls is picked up the next time |
 
 Inside container menus, the Creative inventory, and settings/list screens, arrow
 keys/Tab/Enter/Home/End/Delete/Space/Page Up/Down take on the screen-specific

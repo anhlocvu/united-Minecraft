@@ -230,6 +230,24 @@ public final class ClientKeyBindings {
 	public static final KeybindAction NARRATE_SCOREBOARD_FULL = new KeybindAction(
 			"narrate_scoreboard_full", KeybindCategory.NARRATION, new Keybind(InputConstants.KEY_APOSTROPHE, InputConstants.MOD_ALT));
 
+	/** Flips Attack/Destroy and Place/Use between the mouse buttons and the player's other keys - see {@link AttackUseKeySwap}. */
+	public static final KeybindAction SWAP_ATTACK_USE_KEYS =
+			new KeybindAction("swap_attack_use_keys", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_F7, 0));
+
+	/**
+	 * Debug overlay navigation - GLOBAL, but {@link DebugOverlayController} ignores them unless the
+	 * F3 overlay is showing. Brackets are otherwise unused, so these never compete with another
+	 * action; Shift picks the section-level variant via the usual most-specific-wins resolution.
+	 */
+	public static final KeybindAction DEBUG_NEXT_LINE =
+			new KeybindAction("debug_next_line", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_RBRACKET, 0));
+	public static final KeybindAction DEBUG_PREVIOUS_LINE =
+			new KeybindAction("debug_previous_line", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_LBRACKET, 0));
+	public static final KeybindAction DEBUG_NEXT_SECTION = new KeybindAction(
+			"debug_next_section", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_RBRACKET, InputConstants.MOD_SHIFT));
+	public static final KeybindAction DEBUG_PREVIOUS_SECTION = new KeybindAction(
+			"debug_previous_section", KeybindCategory.GENERAL, new Keybind(InputConstants.KEY_LBRACKET, InputConstants.MOD_SHIFT));
+
 	// --- Inventory/container-screen actions -------------------------------------------------
 	// CONTAINER_SCREEN context (see that enum constant's own doc): dispatched directly off each
 	// screen's key-press events by MenuAccessibilityController/CreativeInventoryController, never

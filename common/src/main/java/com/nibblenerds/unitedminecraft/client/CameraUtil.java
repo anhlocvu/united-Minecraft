@@ -128,22 +128,39 @@ public final class CameraUtil {
 	 * point-blank range, since gravity pulls the real arrow down along the way.
 	 */
 	public static void aimBallisticAt(LocalPlayer player, Vec3 target, double projectileSpeed) {
-		Vec3 eye = player.getEyePosition();
+		BallisticAim aim = ballisticAim(player.getEyePosition(), target, projectileSpeed);
+		player.setYRot(aim.yaw());
+		player.setXRot(aim.pitch());
+		player.setOldRot();
+		player.setYHeadRot(aim.yaw());
+	}
+
+	/**
+	 * Where to point (vanilla yaw/pitch, degrees) to land a projectile at {@code speed} on a point,
+	 * and whether that arc really gets there - false when the projectile is too slow to cover the
+	 * distance at any angle, in which case the angles are just the straight line.
+	 */
+	record BallisticAim(float yaw, float pitch, boolean reachable) {
+	}
+
+	/** The look direction that arcs a projectile onto {@code target}, without moving the camera - see {@link #aimBallisticAt}. */
+	static BallisticAim ballisticAim(Vec3 eye, Vec3 target, double projectileSpeed) {
 		double dx = target.x() - eye.x();
 		double dy = target.y() - eye.y();
 		double dz = target.z() - eye.z();
 		double horizontalDistance = Math.sqrt(dx * dx + dz * dz);
 
 		float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz));
-		float pitch = horizontalDistance > 1.0e-3
-				? solveBallisticPitch(horizontalDistance, dy, projectileSpeed)
-				: (float) Math.toDegrees(Math.atan2(-dy, horizontalDistance));
-
-		player.setYRot(yaw);
-		player.setXRot(pitch);
-		player.setOldRot();
-		player.setYHeadRot(yaw);
+		if (horizontalDistance <= 1.0e-3) {
+			return new BallisticAim(yaw, (float) Math.toDegrees(Math.atan2(-dy, horizontalDistance)), false);
+		}
+		float pitch = solveBallisticPitch(horizontalDistance, dy, projectileSpeed);
+		double reached = heightAtDistance(pitch, projectileSpeed, horizontalDistance);
+		return new BallisticAim(yaw, pitch, Double.isFinite(reached) && Math.abs(reached - dy) <= REACH_TOLERANCE_BLOCKS);
 	}
+
+	/** How far off in height the solved arc may land and still count as reaching the target. */
+	private static final double REACH_TOLERANCE_BLOCKS = 0.75;
 
 	/**
 	 * Aims at an entity the way any lock-on feature (Scanner, Combat Mode) wants to: a flat
@@ -182,7 +199,7 @@ public final class CameraUtil {
 	 * counts.
 	 * </ul>
 	 */
-	private static double launchSpeed(LocalPlayer player) {
+	static double launchSpeed(LocalPlayer player) {
 		float drawPower = drawingBowPower(player);
 		if (drawPower >= 0.1f) {
 			return drawPower * 3.0f;

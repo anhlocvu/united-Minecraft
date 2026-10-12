@@ -45,6 +45,9 @@ public final class UnitedMinecraftConfig {
 	public double scannerRange = 32.0;
 	public boolean buildModeActionNarrationEnabled = true;
 	public CombatCueMode combatCueMode = CombatCueMode.COMBAT_MODE_ONLY;
+	public CombatStyle combatStyle = CombatStyle.LOCK_ON;
+	/** Beacon guidance while drawing a bow - see {@link BowBeaconController}. Off by default. */
+	public boolean bowBeaconEnabled = false;
 	public boolean durabilityAwarenessEnabled = true;
 	public int durabilityWarningThreshold = 25;
 	public int durabilityCriticalThreshold = 10;
@@ -52,6 +55,8 @@ public final class UnitedMinecraftConfig {
 	public boolean scannerSkipEmptyCategories = false;
 	public boolean scannerAutoLockAfterWalk = false;
 	public boolean autoWalkAutoSprint = false;
+	/** Auto-Walk may swim across water, but only along a route that reaches the target - see {@link ClientPathfinding}. */
+	public boolean autoWalkSwim = true;
 	public boolean navRadarEnabled = false;
 	public boolean miningRadarEnabled = false;
 	public boolean autoCrosshairNarrationEnabled = false;
@@ -64,6 +69,8 @@ public final class UnitedMinecraftConfig {
 	public boolean chatSoundEnabled = true;
 	/** Percent; scales every short audio cue - see {@link CueVolume}. */
 	public int cueVolume = 100;
+	/** How fast the arrow keys turn the camera, as a percentage of the original speed - see {@code AccessibilityTickHandler#handleCameraLook}. */
+	public int turnSpeedPercent = 100;
 	/** Narrate on-screen title and subtitle text - see {@link TitleNarrationController}. */
 	public boolean titleNarrationEnabled = true;
 	/** Spoken and audio alerts while gliding on an elytra - see {@link ElytraAwarenessController}. */
@@ -71,6 +78,11 @@ public final class UnitedMinecraftConfig {
 	public boolean eyeOfEnderCuesEnabled = true;
 	/** Set once the first-launch narrator auto-enable has run - see {@link ClientHooks#enableNarratorOnFirstLaunch}. */
 	public boolean narratorAutoEnableDone = false;
+	/** Set once the first-launch offer to rebind attack/use to comma/period has been shown - see {@link RecommendedKeysPrompt}. */
+	public boolean recommendedKeysAsked = false;
+	/** The Attack/Place keys last left behind by the mouse swap, as key names - null until the first swap; see {@link AttackUseKeySwap}. */
+	public String otherAttackKey = null;
+	public String otherUseKey = null;
 	public boolean mapBeaconEnabled = true;
 	public boolean wallTonesEnabled = false;
 	public int wallToneRange = 8;
@@ -88,6 +100,15 @@ public final class UnitedMinecraftConfig {
 	public boolean structureVoiceNarrate = false;
 	/** Structure ids never announced, e.g. {@code "minecraft:mineshaft"} - only editable in the file for now. */
 	public List<String> structureVoiceMuted = new ArrayList<>();
+
+	/**
+	 * How Combat Mode points the player at the nearest hostile: {@code LOCK_ON} takes over the
+	 * camera and aims for them, {@code BEACON} leaves the camera alone and plays a sound they turn
+	 * toward instead - see {@link CombatBeacon}.
+	 */
+	public enum CombatStyle {
+		LOCK_ON, BEACON
+	}
 
 	/** Governs the audio cue for the weapon attack-strength meter refilling - see {@link CombatModeController#tickAttackCue}. */
 	public enum CombatCueMode {
@@ -127,6 +148,7 @@ public final class UnitedMinecraftConfig {
 		wallToneVolume = (int) clamp("wallToneVolume", wallToneVolume, 5, 100);
 		structureVoiceVolume = (int) clamp("structureVoiceVolume", structureVoiceVolume, 5, 100);
 		cueVolume = (int) clamp("cueVolume", cueVolume, 5, 100);
+		turnSpeedPercent = (int) clamp("turnSpeedPercent", turnSpeedPercent, 50, 300);
 		if (structureVoiceMuted == null) {
 			structureVoiceMuted = new ArrayList<>();
 		}
@@ -142,6 +164,10 @@ public final class UnitedMinecraftConfig {
 		if (combatCueMode == null) {
 			LOGGER.warn("Setting combatCueMode was missing or not a recognised value, using {}", CombatCueMode.COMBAT_MODE_ONLY);
 			combatCueMode = CombatCueMode.COMBAT_MODE_ONLY;
+		}
+		if (combatStyle == null) {
+			LOGGER.warn("Setting combatStyle was missing or not a recognised value, using {}", CombatStyle.LOCK_ON);
+			combatStyle = CombatStyle.LOCK_ON;
 		}
 	}
 

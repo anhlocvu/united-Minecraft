@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import com.nibblenerds.unitedminecraft.client.access.BossHealthOverlayAccess;
 
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.BossHealthOverlay;
 import net.minecraft.client.gui.components.LerpingBossEvent;
@@ -46,7 +47,7 @@ import net.minecraft.world.scores.TeamColor;
  * period narration as they change.
  */
 public final class AccessibilityTickHandler {
-	// Degrees the camera turns per tick while a look key is held.
+	// Degrees the camera turns per tick while a look key is held, at the default turn speed setting.
 	private static final float ROTATION_SPEED_DEG_PER_TICK = 4.5f;
 
 	// Entity.turn(xo, yo) scales its input by 0.15 to emulate mouse-delta sensitivity;
@@ -97,6 +98,7 @@ public final class AccessibilityTickHandler {
 	private static int lastTimePeriod = -1;
 	private static Item lastOffhandItem = null;
 	private static Holder<Biome> lastBiome = null;
+	private static CameraType lastCameraType = null;
 	// null (not Optional.empty()) means "not yet known" - see handleShoulderParrotNarration.
 	private static Optional<Parrot.Variant> lastShoulderParrotLeft = null;
 	private static Optional<Parrot.Variant> lastShoulderParrotRight = null;
@@ -117,12 +119,16 @@ public final class AccessibilityTickHandler {
 			lastTimePeriod = -1;
 			lastOffhandItem = null;
 			lastBiome = null;
+			lastCameraType = null;
+			DebugOverlayModel.reset();
+			DebugOverlayController.reset();
 			lastShoulderParrotLeft = null;
 			lastShoulderParrotRight = null;
 			screenWasOpenLastTick = false;
 			ClientKeyBindings.resetPressState();
 			BuildModeController.reset();
 			CombatModeController.reset();
+			BowBeaconController.reset();
 			MapMarkerController.reset();
 			NamedBlockController.reset();
 			ScannerController.reset();
@@ -223,10 +229,10 @@ public final class AccessibilityTickHandler {
 				// Owns rotation and movement the same way - mutually exclusive with the two
 				// auto-navigate modes just above, only one should ever be walking at once.
 				TrailController.tick(client, player);
-			} else if (ScannerController.isLocked()) {
+			} else if (ScannerController.ownsRotation()) {
 				ScannerController.tickLock(client, player);
 				ScannerController.tick(client, player);
-			} else if (CombatModeController.isActive()) {
+			} else if (CombatModeController.ownsRotation()) {
 				// Owns rotation entirely, the same as scanner lock-on above - deliberately not
 				// also running build mode/normal camera look/scanner key handling here.
 				CombatModeController.tick(client, player);
@@ -289,6 +295,11 @@ public final class AccessibilityTickHandler {
 			// Same reasoning - the attack-strength meter keeps recharging regardless of what
 			// else is going on, and CombatCueMode.ALWAYS needs it tracked outside Combat Mode too.
 			CombatModeController.tickAttackCue(client, player);
+			// Same reasoning - the Beacon style of Combat Mode never touches rotation, so it runs
+			// alongside whichever mode does.
+			BowBeaconController.tick(client, player);
+			// After the bow beacon, which it yields to while a bow is being aimed.
+			CombatModeController.tickBeacon(client, player);
 			// Proactive tool mismatch and mining waste prevention
 			ToolHarvestAwarenessController.tick(client, player);
 			// Same reasoning - a nearby animal you're feeding could finish taming regardless of
@@ -297,10 +308,15 @@ public final class AccessibilityTickHandler {
 			// Same reasoning - a held Jump on a mount keeps charging regardless of what else is
 			// going on, and vanilla's only feedback for a full charge is a purely visual bar.
 			MountJumpCueController.tick(client, player);
+		} else {
+			// A screen is open: the beacon's tick above isn't running, so its looping lock tone
+			// would otherwise play on over the menu.
+			CombatBeacon.stop();
+			BowBeaconController.reset();
 		}
 
-		boolean rotationOwned = BuildModeController.isActive() || ScannerController.isLocked() || AutoWalkController.isActive()
-				|| CombatModeController.isActive() || WaterExitController.isActive() || ElytraLandingController.isActive()
+		boolean rotationOwned = BuildModeController.isActive() || ScannerController.ownsRotation() || AutoWalkController.isActive()
+				|| CombatModeController.ownsRotation() || WaterExitController.isActive() || ElytraLandingController.isActive()
 				|| TrailController.isActive();
 		if (!rotationOwned) {
 			if (rotationOwnedLastTick) {
@@ -318,6 +334,9 @@ public final class AccessibilityTickHandler {
 		rotationOwnedLastTick = rotationOwned;
 		handleHotbarNarration(client, player);
 		handleBiomeNarration(client, player);
+		handleCameraNarration(client);
+		DebugOverlayModel.tick(client);
+		DebugOverlayController.tick(client);
 		handleTimeOfDayNarration(client, player);
 		handleShoulderParrotNarration(client, player);
 		// Only narrated in-world: the menu's own inventory-screen narration already covers the
@@ -361,7 +380,7 @@ public final class AccessibilityTickHandler {
 		// reads it is what makes the reset actually stick. ClientKeyBindings.pressed is a plain
 		// read (no consuming), so re-checking it again below, where it's normally handled, is safe
 		// and unaffected by this early check.
-		if (ScannerController.isLocked() && ClientKeyBindings.pressed(ClientKeyBindings.RESET_ROTATION_TO_NORTH)) {
+		if (ScannerController.ownsRotation() && ClientKeyBindings.pressed(ClientKeyBindings.RESET_ROTATION_TO_NORTH)) {
 			ScannerController.stopLock(client);
 		}
 
@@ -378,10 +397,10 @@ public final class AccessibilityTickHandler {
 		// KeybindContext already means it can only fire while Build Mode is active, so - unlike
 		// the old Alt+I-while-active check this replaces - there's no need to guard against it
 		// firing before Build Mode was ever turned on.
-		if (!ScannerController.isLocked() && !CombatModeController.isActive()
+		if (!ScannerController.ownsRotation() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.BUILD_MODE_RECENTER_CURSOR)) {
 			BuildModeController.recenterCursor(client, player);
-		} else if (!ScannerController.isLocked() && !CombatModeController.isActive()
+		} else if (!ScannerController.ownsRotation() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.TOGGLE_BUILD_MODE)) {
 			BuildModeController.toggle(client, player);
 		}
@@ -401,7 +420,7 @@ public final class AccessibilityTickHandler {
 		// swim while one of them already owns rotation would just fight it. Auto-Walk itself
 		// isn't in that list - starting a swim cancels it outright instead (see
 		// WaterExitController#start), since the two are never useful to run at once anyway.
-		boolean rotationFree = !ScannerController.isLocked() && !CombatModeController.isActive() && !BuildModeController.isActive();
+		boolean rotationFree = !ScannerController.ownsRotation() && !CombatModeController.ownsRotation() && !BuildModeController.isActive();
 		if (rotationFree && ClientKeyBindings.pressed(ClientKeyBindings.WATER_ESCAPE_AUTO_SWIM)) {
 			if (player.isFallFlying()) {
 				ElytraLandingController.start(client, player);
@@ -431,7 +450,7 @@ public final class AccessibilityTickHandler {
 		if (ClientKeyBindings.pressed(ClientKeyBindings.ANGLE_ASSIST_CYCLE)) {
 			AngleAssistController.cycle(client);
 		}
-		if (!BuildModeController.isActive() && !CombatModeController.isActive()
+		if (!BuildModeController.isActive() && !CombatModeController.ownsRotation()
 				&& ClientKeyBindings.pressed(ClientKeyBindings.SCANNER_LOCK_BOSS)) {
 			// Build Mode and Combat Mode both own the camera and the target, so the key does
 			// nothing under either - Combat Mode picks its own (nearest) target.
@@ -499,24 +518,29 @@ public final class AccessibilityTickHandler {
 		} else if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_SCOREBOARD)) {
 			narrateScoreboard(client, player, false);
 		}
+		DebugOverlayController.handleKeys(client);
+		if (ClientKeyBindings.pressed(ClientKeyBindings.SWAP_ATTACK_USE_KEYS)) {
+			AttackUseKeySwap.toggle(client);
+		}
 
 		return snapTurn;
 	}
 
 	private static void handleCameraLook(LocalPlayer player) {
+		float speed = ROTATION_SPEED_DEG_PER_TICK * UnitedMinecraftConfig.get().turnSpeedPercent / 100.0f;
 		float dYaw = 0.0f;
 		float dPitch = 0.0f;
 		if (ClientKeyBindings.LOOK_RIGHT.isDown()) {
-			dYaw += ROTATION_SPEED_DEG_PER_TICK;
+			dYaw += speed;
 		}
 		if (ClientKeyBindings.LOOK_LEFT.isDown()) {
-			dYaw -= ROTATION_SPEED_DEG_PER_TICK;
+			dYaw -= speed;
 		}
 		if (ClientKeyBindings.LOOK_DOWN.isDown()) {
-			dPitch += ROTATION_SPEED_DEG_PER_TICK;
+			dPitch += speed;
 		}
 		if (ClientKeyBindings.LOOK_UP.isDown()) {
-			dPitch -= ROTATION_SPEED_DEG_PER_TICK;
+			dPitch -= speed;
 		}
 		if (dYaw != 0.0f || dPitch != 0.0f) {
 			player.turn(dYaw * TURN_INPUT_SCALE, dPitch * TURN_INPUT_SCALE);
@@ -668,6 +692,28 @@ public final class AccessibilityTickHandler {
 		return stack.isEmpty()
 				? Component.translatable("united_minecraft.narrate.hotbar_empty")
 				: ItemDescriptions.describe(stack, player);
+	}
+
+	/**
+	 * Edge-triggered on the perspective, so it follows F5 and also anything else that switches the
+	 * camera. Said immediately rather than queued: it answers a keypress, like the hotbar does.
+	 */
+	private static void handleCameraNarration(Minecraft client) {
+		CameraType camera = client.options.getCameraType();
+		if (camera != lastCameraType) {
+			if (lastCameraType != null) {
+				client.getNarrator().saySystemNow(Component.translatable(cameraKey(camera)));
+			}
+			lastCameraType = camera;
+		}
+	}
+
+	static String cameraKey(CameraType camera) {
+		return switch (camera) {
+			case FIRST_PERSON -> "united_minecraft.narrate.camera_first_person";
+			case THIRD_PERSON_BACK -> "united_minecraft.narrate.camera_third_person_back";
+			case THIRD_PERSON_FRONT -> "united_minecraft.narrate.camera_third_person_front";
+		};
 	}
 
 	private static void handleBiomeNarration(Minecraft client, LocalPlayer player) {

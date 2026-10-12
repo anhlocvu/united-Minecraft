@@ -6,7 +6,7 @@ import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
-/** Build Mode action narration, Combat cue mode, mode on/off sounds, elytra flight alerts, Eye of Ender cues, Auto-Walk auto-sprint, and Mount jump cue - see {@link SettingsScreen}. */
+/** Arrow-key turn speed, Build Mode action narration, Combat cue mode, mode on/off sounds, elytra flight alerts, Eye of Ender cues, Auto-Walk auto-sprint, and Mount jump cue - see {@link SettingsScreen}. */
 final class ModesMovementSettingsScreen extends SettingsListScreen {
 	ModesMovementSettingsScreen() {
 		super(Component.translatable("united_minecraft.modes_movement_screen.title"));
@@ -18,8 +18,16 @@ final class ModesMovementSettingsScreen extends SettingsListScreen {
 		int x = this.width / 2 - ROW_WIDTH / 2;
 		int y = 0;
 
+		y = addSlider(x, y, 50.0, 300.0, 10.0, config.turnSpeedPercent,
+				"united_minecraft.settings_screen.turn_speed_percent", value -> config.turnSpeedPercent = (int) Math.round(value));
 		y = addToggle(x, y, "united_minecraft.settings_screen.build_mode_action_narration_enabled",
 				config.buildModeActionNarrationEnabled, value -> config.buildModeActionNarrationEnabled = value);
+		y = addCycle(x, y, "united_minecraft.settings_screen.combat_style",
+				List.of(UnitedMinecraftConfig.CombatStyle.values()), config.combatStyle,
+				style -> Component.translatable("united_minecraft.settings_screen.combat_style." + style.name().toLowerCase(Locale.ROOT)),
+				value -> config.combatStyle = value);
+		y = addToggle(x, y, "united_minecraft.settings_screen.bow_beacon_enabled",
+				config.bowBeaconEnabled, value -> config.bowBeaconEnabled = value);
 		y = addCycle(x, y, "united_minecraft.settings_screen.combat_cue_mode",
 				List.of(UnitedMinecraftConfig.CombatCueMode.values()), config.combatCueMode,
 				mode -> Component.translatable("united_minecraft.settings_screen.combat_cue_mode." + mode.name().toLowerCase(Locale.ROOT)),
@@ -32,6 +40,8 @@ final class ModesMovementSettingsScreen extends SettingsListScreen {
 				config.eyeOfEnderCuesEnabled, value -> config.eyeOfEnderCuesEnabled = value);
 		y = addToggle(x, y, "united_minecraft.settings_screen.auto_walk_auto_sprint",
 				config.autoWalkAutoSprint, value -> config.autoWalkAutoSprint = value);
+		y = addToggle(x, y, "united_minecraft.settings_screen.auto_walk_swim",
+				config.autoWalkSwim, value -> config.autoWalkSwim = value);
 		y = addToggle(x, y, "united_minecraft.settings_screen.mount_jump_cue_enabled",
 				config.mountJumpCueEnabled, value -> config.mountJumpCueEnabled = value);
 
