@@ -22,6 +22,8 @@
 		"MultilineTextFieldMixin",
 		"MultiLineEditBoxMixin",
 		"BookEditScreenMixin",
+		"TextFieldHelperMixin",
+		"AbstractSignEditScreenMixin",
 		"MinecraftContinueAttackMixin",
 		"KeyboardHandlerTapMixin",
 		"SystemToastMixin",

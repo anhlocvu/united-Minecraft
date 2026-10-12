@@ -81,6 +81,22 @@ public final class SurroundingsScanner {
 		if (frameStatus != null) {
 			name = name.copy().append(Component.literal(", ")).append(frameStatus);
 		}
+		if (level.getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign) {
+			net.minecraft.world.level.block.entity.SignTextSlot slot = sign.getSlotPlayerIsFacing(player);
+			Component signText = SignNarrationHelper.joinSignLines(sign.getText(slot));
+			if (signText != null) {
+				Component side = Component.translatable(slot == net.minecraft.world.level.block.entity.SignTextSlot.FRONT
+						? "united_minecraft.narrate.sign_side_front"
+						: "united_minecraft.narrate.sign_side_back");
+				name = name.copy().append(Component.literal(", "))
+						.append(side)
+						.append(Component.literal(": "))
+						.append(signText);
+			} else {
+				name = name.copy().append(Component.literal(", "))
+						.append(Component.translatable("united_minecraft.narrate.scanner_sign_blank"));
+			}
+		}
 		return new BlockHit(name, distance);
 	}
 

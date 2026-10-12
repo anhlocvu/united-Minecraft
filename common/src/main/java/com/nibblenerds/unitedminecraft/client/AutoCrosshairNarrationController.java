@@ -33,6 +33,7 @@ public final class AutoCrosshairNarrationController {
 
 	private static Block lastNarratedBlock;
 	private static BlockPos lastNarratedPos;
+	private static net.minecraft.world.level.block.entity.SignTextSlot lastNarratedSignSlot;
 
 	private AutoCrosshairNarrationController() {
 	}
@@ -48,6 +49,7 @@ public final class AutoCrosshairNarrationController {
 		UnitedMinecraftConfig.save();
 		lastNarratedBlock = null;
 		lastNarratedPos = null;
+		lastNarratedSignSlot = null;
 		client.getNarrator().saySystemNow(Component.translatable(config.autoCrosshairNarrationEnabled
 				? "united_minecraft.narrate.auto_crosshair_narration_on"
 				: "united_minecraft.narrate.auto_crosshair_narration_off"));
@@ -57,6 +59,7 @@ public final class AutoCrosshairNarrationController {
 	public static void reset() {
 		lastNarratedBlock = null;
 		lastNarratedPos = null;
+		lastNarratedSignSlot = null;
 	}
 
 	public static void tick(Minecraft client, LocalPlayer player) {
@@ -68,12 +71,20 @@ public final class AutoCrosshairNarrationController {
 			return;
 		}
 		Block current = player.level().getBlockState(pos).getBlock();
-		if (!shouldNarrate(current == lastNarratedBlock, pos, lastNarratedPos, UnitedMinecraftConfig.get().autoCrosshairRepeatSameBlock)) {
+		net.minecraft.world.level.block.entity.SignTextSlot currentSignSlot = player.level().getBlockEntity(pos) instanceof net.minecraft.world.level.block.entity.SignBlockEntity sign
+				? sign.getSlotPlayerIsFacing(player)
+				: null;
+		boolean slotChanged = currentSignSlot != null && currentSignSlot != lastNarratedSignSlot;
+		if (!slotChanged && !shouldNarrate(current == lastNarratedBlock, pos, lastNarratedPos, UnitedMinecraftConfig.get().autoCrosshairRepeatSameBlock)) {
 			return;
 		}
-		client.getNarrator().saySystemNow(current.getName());
+		Component narration = currentSignSlot != null
+				? SignNarrationHelper.describeSignBlock(player.level(), pos, current.getName(), player)
+				: current.getName();
+		client.getNarrator().saySystemNow(narration);
 		lastNarratedBlock = current;
 		lastNarratedPos = pos;
+		lastNarratedSignSlot = currentSignSlot;
 	}
 
 	/**
