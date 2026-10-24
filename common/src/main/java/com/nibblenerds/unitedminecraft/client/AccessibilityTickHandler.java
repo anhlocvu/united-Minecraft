@@ -551,8 +551,8 @@ public final class AccessibilityTickHandler {
 	 * Alt+arrows snap-turn to the nearest 45 degree marker instead of turning smoothly:
 	 * left/right step yaw to the previous/next compass octant (announced automatically by
 	 * {@link #handleFacingNarration}, since it lands exactly on an octant boundary), and
-	 * up/down step pitch through -90/-45/0/45/90 (announced here, since nothing else covers
-	 * pitch). The epsilon nudge before flooring/ceiling means a press always moves at least
+	 * up/down step pitch through -90/-45/0/45/90 (announced here as the pitch alone, since nothing else
+	 * covers pitch). The epsilon nudge before flooring/ceiling means a press always moves at least
 	 * one full step, even when already sitting exactly on a 45 degree marker.
 	 *
 	 * <p>Takes pre-computed rising-edge presses rather than reading the keys' click queues
@@ -584,7 +584,9 @@ public final class AccessibilityTickHandler {
 			player.setYHeadRot(player.getYRot());
 		}
 		if (pitchChanged) {
-			narrateBearing(client, player);
+			// Pitch alone - the heading hasn't moved, and hearing it again on every look-up press is noise.
+			client.getNarrator().saySystemNow(
+					Component.translatable("united_minecraft.narrate.pitch", Math.round(player.getXRot())));
 		}
 	}
 

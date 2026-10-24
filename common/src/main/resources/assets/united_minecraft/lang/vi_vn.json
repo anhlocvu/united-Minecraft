@@ -258,6 +258,7 @@
 	"united_minecraft.narrate.status_effect_level": "%s %s",
 	"united_minecraft.narrate.status_effect_duration": "còn lại %s:%s",
 	"united_minecraft.narrate.status_effect_no_timer": "không giới hạn thời gian",
+	"united_minecraft.narrate.pitch": "Độ nghiêng %s độ",
 	"united_minecraft.narrate.bearing": "Hướng nhìn %s độ, Độ nghiêng %s độ",
 	"united_minecraft.narrate.chat_history_empty": "Chưa có tin nhắn trò chuyện nào",
 	"united_minecraft.narrate.chat_history_position": "tin nhắn %s trên %s",
