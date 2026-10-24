@@ -21,8 +21,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -39,7 +42,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.animal.allay.Allay;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.Horse;
+import net.minecraft.world.entity.animal.equine.Markings;
+import net.minecraft.world.entity.animal.fish.TropicalFish;
+import net.minecraft.world.entity.animal.panda.Panda;
 import net.minecraft.world.entity.animal.parrot.Parrot;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -934,6 +942,7 @@ public final class ScannerController {
 				name = name.copy().append(Component.literal(", ")).append(Component.translatable("united_minecraft.narrate.sheep_sheared"));
 			}
 		}
+		name = withVariant(entity, name);
 		if (entity instanceof LivingEntity living && living.isBaby()) {
 			name = Component.translatable("united_minecraft.narrate.baby_mob", name);
 		}
@@ -1047,6 +1056,80 @@ public final class ScannerController {
 			fragments.add(Component.translatable("united_minecraft.narrate.mob_wearing", armor));
 		}
 		return fragments;
+	}
+
+	/**
+	 * Every variant an entity can expose through its data components - cats, wolves, pigs, cows,
+	 * chickens, frogs, rabbits, foxes, llamas, axolotls, mooshrooms, horses, parrots, zombie
+	 * nautilus. {@link Entity#get} answers for the entity's own live variant (not just an item's),
+	 * returns null for any entity that doesn't have that kind, and is the one place vanilla
+	 * treats them uniformly, so a species added later (or a modded one using the same component)
+	 * only needs its id translated. Sheep color is not here: {@link #mobDisplayName} handles it
+	 * along with sheared. Species whose variant isn't a component are handled in {@link #variantFragments}.
+	 */
+	private static final List<DataComponentType<?>> VARIANT_COMPONENTS = List.of(
+			DataComponents.CAT_VARIANT, DataComponents.WOLF_VARIANT, DataComponents.PIG_VARIANT,
+			DataComponents.COW_VARIANT, DataComponents.CHICKEN_VARIANT, DataComponents.FROG_VARIANT,
+			DataComponents.ZOMBIE_NAUTILUS_VARIANT, DataComponents.RABBIT_VARIANT, DataComponents.FOX_VARIANT,
+			DataComponents.LLAMA_VARIANT, DataComponents.AXOLOTL_VARIANT, DataComponents.MOOSHROOM_VARIANT,
+			DataComponents.HORSE_VARIANT, DataComponents.PARROT_VARIANT);
+
+	/** "Tabby Cat", "Chestnut Horse with White Dots", "Orange and White Kob Tropical Fish". */
+	private static Component withVariant(Entity entity, Component name) {
+		for (Component fragment : variantFragments(entity)) {
+			name = Component.translatable("united_minecraft.narrate.mob_variant", fragment, name);
+		}
+		if (entity instanceof Horse horse && horse.getMarkings() != Markings.NONE) {
+			name = name.copy().append(Component.literal(" ")).append(Component.translatable(
+					"united_minecraft.narrate.mob_markings",
+					variantName(horse.getMarkings().name().toLowerCase(Locale.ROOT))));
+		}
+		return name;
+	}
+
+	private static List<Component> variantFragments(Entity entity) {
+		List<Component> fragments = new ArrayList<>();
+		for (DataComponentType<?> type : VARIANT_COMPONENTS) {
+			Object value = entity.get(type);
+			if (value instanceof Parrot.Variant parrot) {
+				fragments.add(parrotVariantName(parrot));
+				continue;
+			}
+			String id = variantId(value);
+			if (id != null) {
+				fragments.add(variantName(id));
+			}
+		}
+		if (entity instanceof Panda panda && !panda.getVariant().getSerializedName().equals("normal")) {
+			fragments.add(variantName(panda.getVariant().getSerializedName()));
+		}
+		if (entity instanceof TropicalFish fish) {
+			fragments.add(Component.translatable("united_minecraft.narrate.tropical_fish_look",
+					dyeColorName(fish.getBaseColor()), dyeColorName(fish.getPatternColor()),
+					variantName(fish.getPattern().getSerializedName())));
+		}
+		return fragments;
+	}
+
+	/** Registry-backed variants carry a key (the namespace is dropped, as modded ones fall back below); enum ones a serialized name. */
+	private static String variantId(Object value) {
+		if (value instanceof Holder<?> holder) {
+			return holder.unwrapKey().map(key -> key.identifier().getPath()).orElse(null);
+		}
+		if (value instanceof StringRepresentable named) {
+			return named.getSerializedName();
+		}
+		return null;
+	}
+
+	/** The translated name, or a readable version of the raw id for a variant we have no key for (modded, or newly added by vanilla). */
+	private static Component variantName(String id) {
+		String key = "united_minecraft.narrate.variant." + id;
+		if (Language.getInstance().has(key)) {
+			return Component.translatable(key);
+		}
+		String spaced = id.replace('_', ' ');
+		return Component.literal(Character.toUpperCase(spaced.charAt(0)) + spaced.substring(1));
 	}
 
 	private static Component dyeColorName(DyeColor color) {
