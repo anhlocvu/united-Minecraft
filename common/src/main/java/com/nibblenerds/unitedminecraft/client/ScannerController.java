@@ -874,6 +874,7 @@ public final class ScannerController {
 		CameraUtil.aimAt(player, entity.getBoundingBox().getCenter());
 		client.getNarrator().saySystemNow(
 				Component.translatable("united_minecraft.narrate.scanner_lock_started", mobDisplayName(entity, player)));
+		AngleAssistController.disable(client);
 	}
 
 	private static void targetEntityOnce(Minecraft client, LocalPlayer player, Entity entity, boolean walkThere) {
@@ -898,6 +899,7 @@ public final class ScannerController {
 		CameraUtil.aimAt(player, entity.getBoundingBox().getCenter());
 		client.getNarrator().saySystemNow(
 				Component.translatable("united_minecraft.narrate.scanner_facing", mobDisplayName(entity, player)));
+		AngleAssistController.disable(client);
 	}
 
 	/**
@@ -1204,6 +1206,7 @@ public final class ScannerController {
 	private static void aimOnceAtBlock(Minecraft client, LocalPlayer player, BlockPos pos, Component name) {
 		CameraUtil.aimAt(player, CameraUtil.aimPointOn(player, pos));
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.scanner_facing", name));
+		AngleAssistController.disable(client);
 	}
 
 	/**

@@ -148,6 +148,7 @@ public final class AutoWalkController {
 		previousInput = player.input;
 		player.input = new RouteInput();
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.autowalk_started", name));
+		AngleAssistController.disable(client);
 	}
 
 	public static void cancel(Minecraft client, LocalPlayer player) {

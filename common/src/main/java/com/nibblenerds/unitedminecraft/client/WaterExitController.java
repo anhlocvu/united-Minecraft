@@ -121,6 +121,7 @@ public final class WaterExitController {
 		previousInput = player.input;
 		player.input = new RouteInput();
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.water_exit_started"));
+		AngleAssistController.disable(client);
 	}
 
 	public static void cancel(Minecraft client, LocalPlayer player) {

@@ -59,8 +59,11 @@ and never to something beyond it.
   back up until you are over its edge. It says "Back up to the edge" until you
   are, then "Ready to place".
 
-It stands down while Build Mode, Combat Mode, a Scanner lock or Auto-Walk has the
-camera.
+It turns itself off, saying "Angle assist off", whenever something else takes over
+where you are looking: turning on Build Mode or a camera-steering Combat Mode, a
+Scanner lock or face-this action, Auto-Walk, Water Exit, Elytra Landing, the cave
+trail, or turning to face the last Eye of Ender. Press Alt+G to turn it back on
+afterwards.
 
 ## Tree Chopping Assist
 

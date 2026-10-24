@@ -181,6 +181,7 @@ public final class EyeOfEnderController {
 		Vec3 here = player.position();
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.eye_facing",
 				CameraUtil.compassDirectionTo(here, here.add(lastDirection))));
+		AngleAssistController.disable(client);
 	}
 
 	private static void playAt(Minecraft client, LocalPlayer player, SoundEvent sound, Vec3 pos, float volume, float pitch) {

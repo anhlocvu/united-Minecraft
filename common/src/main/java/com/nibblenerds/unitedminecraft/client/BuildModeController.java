@@ -270,6 +270,7 @@ public final class BuildModeController {
 					.append(Component.literal(" "))
 					.append(describeCursor(player));
 			client.getNarrator().saySystemNow(message);
+			AngleAssistController.disable(client);
 		} else {
 			if (breakHeld) {
 				// Cleanly cancel any in-progress mining rather than leaving it dangling.

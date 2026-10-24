@@ -91,6 +91,20 @@ public final class AngleAssistController {
 				"united_minecraft.narrate.angle_mode_" + mode.name().toLowerCase(java.util.Locale.ROOT)));
 	}
 
+	/**
+	 * Turns the mode off when something else takes over where the player is looking - Build Mode,
+	 * a Scanner aim or lock, the auto-navigate modes. Left on, it would quietly resume and drag
+	 * the pitch back as soon as that finished. Queued, not interrupting, so it follows the
+	 * narration of whatever took over. Does nothing (and says nothing) when already off.
+	 */
+	public static void disable(Minecraft client) {
+		if (mode == Mode.OFF) {
+			return;
+		}
+		reset();
+		client.getNarrator().saySystemQueued(Component.translatable("united_minecraft.narrate.angle_mode_off"));
+	}
+
 	public static void tick(Minecraft client, LocalPlayer player) {
 		switch (mode) {
 			case TUNNEL -> aimAtPattern(client, player, BlockPos.containing(player.position()), TUNNEL_DEPTH,

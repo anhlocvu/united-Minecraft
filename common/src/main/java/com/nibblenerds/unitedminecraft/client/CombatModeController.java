@@ -125,6 +125,7 @@ public final class CombatModeController {
 						? Component.translatable("united_minecraft.narrate.scanner_lock_started", target.getDisplayName())
 						: Component.translatable("united_minecraft.narrate.scanner_empty"));
 		client.getNarrator().saySystemNow(message);
+		AngleAssistController.disable(client);
 	}
 
 	/** Lock On style: pick the nearest threat and aim the camera at it. */

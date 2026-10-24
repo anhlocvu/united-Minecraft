@@ -207,6 +207,7 @@ public final class TrailController {
 		previousInput = player.input;
 		player.input = new RouteInput();
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.trail_started"));
+		AngleAssistController.disable(client);
 	}
 
 	public static void cancel(Minecraft client, LocalPlayer player) {

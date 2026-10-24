@@ -137,6 +137,7 @@ public final class ElytraLandingController {
 		Vec3 from = player.position();
 		client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.elytra_landing_started",
 				(int) Math.round(spot.distance()), CameraUtil.compassDirectionTo(from, Vec3.atBottomCenterOf(spot.feet()))));
+		AngleAssistController.disable(client);
 		apply(player, first);
 	}
 
