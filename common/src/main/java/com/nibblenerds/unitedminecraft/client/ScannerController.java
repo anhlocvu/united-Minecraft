@@ -960,6 +960,26 @@ public final class ScannerController {
 		if (entity instanceof Leashable leashable && leashable.isLeashed()) {
 			name = name.copy().append(Component.literal(" ")).append(Component.translatable("united_minecraft.narrate.scanner_leashed"));
 		}
+		// Any vehicle at all (boat, minecart, horse, strider, ...) - Entity#getVehicle is generic,
+		// so no per-vehicle handling. Its plain display name is enough; its own tame/equipment
+		// details would only bury the mob actually being scanned.
+		Entity vehicle = entity.getVehicle();
+		if (vehicle != null) {
+			name = name.copy().append(Component.literal(" ")).append(
+					Component.translatable("united_minecraft.narrate.mob_riding", vehicle.getDisplayName()));
+		}
+		// The reverse: what's sitting in this boat/minecart/mount. Display names only, like the
+		// vehicle above - a rider's own details are heard by scanning the rider.
+		List<Entity> passengers = entity.getPassengers();
+		if (!passengers.isEmpty()) {
+			MutableComponent riders = null;
+			for (Entity passenger : passengers) {
+				riders = riders == null ? passenger.getDisplayName().copy()
+						: riders.append(Component.literal(", ")).append(passenger.getDisplayName());
+			}
+			name = name.copy().append(Component.literal(" ")).append(
+					Component.translatable("united_minecraft.narrate.mob_carrying", riders));
+		}
 		if (entity instanceof Player shoulderOwner) {
 			for (Component fragment : shoulderParrotFragments(shoulderOwner)) {
 				name = name.copy().append(Component.literal(" ")).append(fragment);

@@ -344,6 +344,8 @@
 	"united_minecraft.narrate.shoulder_parrot_flew_off_left": "Your left shoulder parrot flew off",
 	"united_minecraft.narrate.shoulder_parrot_flew_off_right": "Your right shoulder parrot flew off",
 	"united_minecraft.narrate.mob_sitting": "Sitting",
+	"united_minecraft.narrate.mob_carrying": "carrying %s",
+	"united_minecraft.narrate.mob_riding": "riding %s",
 	"united_minecraft.narrate.mob_tamed": "Tamed",
 	"united_minecraft.narrate.mob_tamed_by": "Tamed by %s",
 	"united_minecraft.narrate.mob_tamed_notification": "Tamed %s",
