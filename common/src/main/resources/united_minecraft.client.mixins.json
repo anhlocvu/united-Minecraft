@@ -37,7 +37,8 @@
 		"SoundBufferLibraryMixin",
 		"StructureVoiceChannelMixin",
 		"DebugScreenOverlayAccessorMixin",
-		"ClientPacketListenerMixin"
+		"ClientPacketListenerMixin",
+		"LevelStorageAccessMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

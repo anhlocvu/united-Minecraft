@@ -91,6 +91,22 @@ final class WorldScopedStore<T> {
 		cachedWorldKey = null;
 	}
 
+	/**
+	 * Deletes what was saved for the singleplayer save folder {@code levelId}, so a new world later
+	 * created under the same name starts empty instead of inheriting the old one's data.
+	 */
+	void forgetSingleplayerWorld(String levelId) {
+		String worldId = "sp_" + levelId;
+		for (Path file : List.of(fileFor(worldId), legacyFileFor(worldId))) {
+			try {
+				Files.deleteIfExists(file);
+			} catch (IOException e) {
+				// The world is already gone; a leftover file only means stale data may reappear.
+				logger.warn("Failed to delete {} for deleted world {}", file, levelId, e);
+			}
+		}
+	}
+
 	/** The live, mutable entry list - callers add/remove directly, then call {@link #save()}. */
 	List<T> entries() {
 		return entries;

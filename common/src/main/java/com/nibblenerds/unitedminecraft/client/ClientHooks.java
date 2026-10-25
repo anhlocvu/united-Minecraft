@@ -160,6 +160,15 @@ public final class ClientHooks {
 		ServerWorldSeed.onSpawnInfo(info);
 	}
 
+	/**
+	 * A singleplayer save folder was deleted. Called from a mixin on vanilla's own deletion, which
+	 * both the world list and the hardcore-death prompt go through.
+	 */
+	public static void onSingleplayerWorldDeleted(String levelId) {
+		MapMarkerController.onWorldDeleted(levelId);
+		NamedBlockController.onWorldDeleted(levelId);
+	}
+
 	/** The client is shutting down. */
 	public static void onClientStopping() {
 		PrismController.shutdownIfLoaded();

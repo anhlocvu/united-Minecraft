@@ -129,7 +129,8 @@ Shift+U places a named waypoint at your current location. Markers is a Scanner
 category that ignores distance and always lists everything you have placed in
 your current dimension. Markers are saved per world. On a multiplayer server a world is told apart by the server's
 address together with the seed the server reports, so two worlds on one address keep separate
-markers. Named blocks are kept the same way.
+markers. Named blocks are kept the same way. Deleting a singleplayer world from the world
+list also deletes its markers and block names.
 
 - Shift+Enter on a marker walks you to its exact coordinates.
 - You can also mark a block. Name it with Shift+U and tick "Also show in

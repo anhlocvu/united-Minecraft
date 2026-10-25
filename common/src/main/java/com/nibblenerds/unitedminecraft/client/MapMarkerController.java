@@ -61,6 +61,10 @@ public final class MapMarkerController {
 		}
 	}
 
+	static void onWorldDeleted(String levelId) {
+		STORE.forgetSingleplayerWorld(levelId);
+	}
+
 	public static void reset() {
 		STORE.reset();
 		markersByPos = new HashMap<>();

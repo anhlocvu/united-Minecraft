@@ -61,6 +61,10 @@ public final class NamedBlockController {
 		}
 	}
 
+	static void onWorldDeleted(String levelId) {
+		STORE.forgetSingleplayerWorld(levelId);
+	}
+
 	public static void reset() {
 		STORE.reset();
 		namedBlocksByPos = new HashMap<>();
