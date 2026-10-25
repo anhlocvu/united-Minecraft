@@ -513,6 +513,10 @@ public final class AccessibilityTickHandler {
 		if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_BOSS_BARS)) {
 			narrateBossBars(client);
 		}
+		if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_HANDS)) {
+			client.getNarrator().saySystemNow(Component.translatable("united_minecraft.narrate.hands_swapped",
+					describeHand(player.getMainHandItem(), player), describeHand(player.getOffhandItem(), player)));
+		}
 		if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_SCOREBOARD_FULL)) {
 			narrateScoreboard(client, player, true);
 		} else if (ClientKeyBindings.pressed(ClientKeyBindings.NARRATE_SCOREBOARD)) {

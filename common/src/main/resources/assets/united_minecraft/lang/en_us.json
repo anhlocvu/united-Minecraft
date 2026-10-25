@@ -65,6 +65,7 @@
 	"united_minecraft.keybind.scanner_coordinates": "Scanner: Announce Focused Item's Coordinates",
 	"united_minecraft.keybind.open_settings": "Open United Minecraft Settings",
 	"united_minecraft.keybind.narrate_boss_bars": "Narrate Boss Bars",
+	"united_minecraft.keybind.narrate_hands": "Narrate Main Hand and Off-Hand",
 	"united_minecraft.keybind.narrate_scoreboard": "Narrate Scoreboard",
 	"united_minecraft.keybind.narrate_scoreboard_full": "Narrate Scoreboard (Full List)",
 	"united_minecraft.keybind.container_switch_section_next": "Inventory Screens: Next Section",

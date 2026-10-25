@@ -16,6 +16,7 @@ key or modifier combination in United Minecraft's own Keybindings screen
 | R (Shift = toggle Auto Crosshair Narration) | Read what is in front of me |
 | V (Shift = weather and, at night, moon phase) | Time of day |
 | ; | Read the current boss bar(s) |
+| ` | Read what is in your main hand and off-hand |
 | ' (hold Alt for the whole board) | Read the sidebar scoreboard |
 | ] / [ (F3 overlay open) | Next / previous line of the debug overlay section |
 | Shift+] / Shift+[ (F3 overlay open) | Next / previous debug overlay section |

@@ -224,6 +224,9 @@ public final class ClientKeyBindings {
 	public static final KeybindAction NARRATE_BOSS_BARS =
 			new KeybindAction("narrate_boss_bars", KeybindCategory.NARRATION, new Keybind(InputConstants.KEY_SEMICOLON, 0));
 
+	public static final KeybindAction NARRATE_HANDS =
+			new KeybindAction("narrate_hands", KeybindCategory.NARRATION, new Keybind(InputConstants.KEY_GRAVE, 0));
+
 	public static final KeybindAction NARRATE_SCOREBOARD =
 			new KeybindAction("narrate_scoreboard", KeybindCategory.NARRATION, new Keybind(InputConstants.KEY_APOSTROPHE, 0));
 	/** Was Alt+' - see {@link #NARRATE_SCOREBOARD_FULL}. */

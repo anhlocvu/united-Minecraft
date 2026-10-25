@@ -33,6 +33,8 @@ Each of these has its own key (see [Key bindings](keybindings.md)).
   distance. For a block it also says which face your crosshair landed on
   (North, East, South, West, Top or Bottom) - the same raycast the vanilla
   crosshair uses, so it is exactly what a click would hit.
+- **Held items:** the grave accent key (`) reads what is in your main hand and
+  off-hand.
 - **Boss bars** (name and percentage) and the **sidebar scoreboard**. The
   scoreboard is read exactly as the sidebar shows it - your team's own sidebar,
   server lines built from team prefixes, and hidden or reformatted scores
