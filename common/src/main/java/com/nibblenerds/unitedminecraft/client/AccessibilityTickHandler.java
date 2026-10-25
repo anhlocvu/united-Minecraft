@@ -131,6 +131,7 @@ public final class AccessibilityTickHandler {
 			BowBeaconController.reset();
 			MapMarkerController.reset();
 			NamedBlockController.reset();
+			ServerWorldSeed.reset();
 			ScannerController.reset();
 			AutoWalkController.reset();
 			WaterExitController.reset();

@@ -36,7 +36,8 @@
 		"ChatMessageSoundMixin",
 		"SoundBufferLibraryMixin",
 		"StructureVoiceChannelMixin",
-		"DebugScreenOverlayAccessorMixin"
+		"DebugScreenOverlayAccessorMixin",
+		"ClientPacketListenerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

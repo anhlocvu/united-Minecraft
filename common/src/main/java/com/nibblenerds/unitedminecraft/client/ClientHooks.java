@@ -9,6 +9,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.input.KeyEvent;
+import net.minecraft.network.protocol.game.CommonPlayerSpawnInfo;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -149,6 +150,14 @@ public final class ClientHooks {
 	 */
 	public static void onStructuresNearby(StructuresNearbyPayload payload) {
 		StructureVoiceController.onStructuresNearby(payload);
+	}
+
+	/**
+	 * The server told the client which world it is in, by login or respawn packet. Called from a
+	 * mixin rather than a loader bridge, since both packets are vanilla's own.
+	 */
+	public static void onWorldSpawnInfo(CommonPlayerSpawnInfo info) {
+		ServerWorldSeed.onSpawnInfo(info);
 	}
 
 	/** The client is shutting down. */
